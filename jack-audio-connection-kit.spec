@@ -1,7 +1,7 @@
 Summary: The Jack Audio Connection Kit
 Name: jack-audio-connection-kit
 Version: 0.101.1
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: GPL/LGPL
 Group: System Environment/Daemons
 Source0: http://dl.sourceforge.net/sourceforge/jackit/%{name}-%{version}.tar.gz
@@ -54,14 +54,10 @@ Small example clients that use the Jack Audio Connection Kit.
 # Also patch0 touches configure.ac.
 autoreconf --force --install
 
-%configure --enable-stripped-jackd \
+%configure \
     --with-html-dir=%{_docdir} \
-%ifarch i386
-    --enable-sse=no --enable-mmx=no \
-%endif
     --disable-oss \
     --disable-portaudio \
-    --enable-optimize \
     --with-default-tmpdir=/dev/shm
 make %{?_smp_mflags}
 
@@ -123,6 +119,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/jack_simple_client
 
 %changelog
+* Sat May 27 2006 Andy Shevchenko <andriy@asplinux.com.ua> 0.101.1-9
+- remove --enable-stripped-jackd and --enable-optimize (use default flags)
+
 * Fri May 19 2006 Andy Shevchenko <andriy@asplinux.com.ua> 0.101.1-8
 - uniform directories items at %files section
 
