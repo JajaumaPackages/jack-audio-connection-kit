@@ -1,7 +1,7 @@
 Summary: The Jack Audio Connection Kit
 Name: jack-audio-connection-kit
 Version: 0.101.1
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: GPL/LGPL
 Group: System Environment/Daemons
 Source0: http://dl.sourceforge.net/sourceforge/jackit/%{name}-%{version}.tar.gz
@@ -14,6 +14,7 @@ BuildRequires: libsndfile-devel >= 1.0.0
 BuildRequires: pkgconfig
 BuildRequires: doxygen
 BuildRequires: readline-devel, libtermcap-devel, ncurses-devel
+BuildRequires: autoconf >= 2.59, automake >= 1.9.3
 
 %description
 JACK is a low-latency audio server, written primarily for the Linux
@@ -119,6 +120,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/jack_simple_client
 
 %changelog
+* Tue Jun 20 2006 Andy Shevchenko <andriy@asplinux.com.ua> 0.101.1-10
+- add BRs: autoconf, automake
+  (http://fedoraproject.org/wiki/QA/FixBuildRequires)
+
 * Sat May 27 2006 Andy Shevchenko <andriy@asplinux.com.ua> 0.101.1-9
 - remove --enable-stripped-jackd and --enable-optimize (use default flags)
 
