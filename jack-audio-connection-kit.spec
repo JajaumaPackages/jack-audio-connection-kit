@@ -1,7 +1,7 @@
 Summary: The Jack Audio Connection Kit
 Name: jack-audio-connection-kit
 Version: 0.101.1
-Release: 11%{?dist}
+Release: 12%{?dist}
 License: GPL/LGPL
 Group: System Environment/Daemons
 Source0: http://dl.sourceforge.net/sourceforge/jackit/%{name}-%{version}.tar.gz
@@ -70,7 +70,7 @@ rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 
 # prepare README.Fedora for documentation including
-cp -p %{SOURCE1} README.Fedora
+install -p -m644 %{SOURCE1} README.Fedora
 
 # remove extra install of the documentation
 rm -fr $RPM_BUILD_ROOT%{_docdir}
@@ -120,6 +120,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/jack_simple_client
 
 %changelog
+* Tue Aug 01 2006 Andy Shevchenko <andriy@asplinux.com.ua> 0.101.1-12
+- use install instead of cp (#200835)
+
 * Tue Jul 04 2006 Andy Shevchenko <andriy@asplinux.com.ua> 0.101.1-11
 - update URL
 - add BR: libtool
