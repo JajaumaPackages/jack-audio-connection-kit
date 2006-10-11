@@ -1,12 +1,11 @@
 Summary: The Jack Audio Connection Kit
 Name: jack-audio-connection-kit
-Version: 0.101.1
-Release: 13%{?dist}
+Version: 0.102.20
+Release: 1%{?dist}
 License: GPL/LGPL
 Group: System Environment/Daemons
 Source0: http://dl.sourceforge.net/sourceforge/jackit/%{name}-%{version}.tar.gz
 Source1: %{name}-README.Fedora
-Patch0: http://lalists.stanford.edu/lad/2006/01/att-0167/jack-clock3.patch
 URL: http://www.jackaudio.org
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: alsa-lib-devel
@@ -48,11 +47,9 @@ Small example clients that use the Jack Audio Connection Kit.
 
 %prep
 %setup -q
-%patch0 -p1 -b .clock3
 
 %build
 # x86_64 issue reported by Rudolf Kastl (not checked, but not bad).
-# Also patch0 touches configure.ac.
 autoreconf --force --install
 
 %configure \
@@ -120,6 +117,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/jack_simple_client
 
 %changelog
+* Wed Oct 11 2006 Andy Shevchenko <andy@smile.org.ua> 0.102.20-1
+- update to 0.102.20
+- drop patch0 (already in mainstream)
+
 * Tue Aug 29 2006 Andy Shevchenko <andriy@asplinux.com.ua> 0.101.1-13
 - http://fedoraproject.org/wiki/Extras/Schedule/FC6MassRebuild
 
