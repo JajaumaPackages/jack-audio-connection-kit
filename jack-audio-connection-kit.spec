@@ -1,7 +1,7 @@
 Summary: The Jack Audio Connection Kit
 Name: jack-audio-connection-kit
 Version: 0.102.20
-Release: 2%{?dist}
+Release: 2.0%{?dist}
 License: GPL/LGPL
 Group: System Environment/Daemons
 Source0: http://dl.sourceforge.net/sourceforge/jackit/%{name}-%{version}.tar.gz
@@ -14,6 +14,7 @@ BuildRequires: pkgconfig
 BuildRequires: doxygen
 BuildRequires: readline-devel, libtermcap-devel, ncurses-devel
 BuildRequires: autoconf >= 2.59, automake >= 1.9.3, libtool
+#BuildRequires: libfreebob >= 1.0.0
 
 %description
 JACK is a low-latency audio server, written primarily for the Linux
@@ -114,12 +115,15 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/jack_showtime
 %{_bindir}/jack_monitor_client
 %{_bindir}/jack_simple_client
+%{_bindir}/jack_midiseq
+%{_bindir}/jack_midisine
 
 %changelog
-* Wed Oct 11 2006 Andy Shevchenko <andy@smile.org.ua> 0.102.20-2
+* Wed Oct 11 2006 Andy Shevchenko <andy@smile.org.ua> 0.102.20-2.0
 - update to 0.102.20
 - drop patch0 (already in mainstream)
 - no pack jack_transport (build error)
+- pack new JACK MIDI files
 
 * Tue Aug 29 2006 Andy Shevchenko <andriy@asplinux.com.ua> 0.101.1-13
 - http://fedoraproject.org/wiki/Extras/Schedule/FC6MassRebuild
