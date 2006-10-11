@@ -1,7 +1,7 @@
 Summary: The Jack Audio Connection Kit
 Name: jack-audio-connection-kit
 Version: 0.102.20
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPL/LGPL
 Group: System Environment/Daemons
 Source0: http://dl.sourceforge.net/sourceforge/jackit/%{name}-%{version}.tar.gz
@@ -92,7 +92,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/jack_unload
 %{_bindir}/jack_bufsize
 %{_bindir}/jack_freewheel
-%{_bindir}/jack_transport
 %{_libdir}/jack/
 %{_mandir}/man1/jack*.1*
 %{_libdir}/libjack.so.*
@@ -117,9 +116,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/jack_simple_client
 
 %changelog
-* Wed Oct 11 2006 Andy Shevchenko <andy@smile.org.ua> 0.102.20-1
+* Wed Oct 11 2006 Andy Shevchenko <andy@smile.org.ua> 0.102.20-2
 - update to 0.102.20
 - drop patch0 (already in mainstream)
+- no pack jack_transport (build error)
 
 * Tue Aug 29 2006 Andy Shevchenko <andriy@asplinux.com.ua> 0.101.1-13
 - http://fedoraproject.org/wiki/Extras/Schedule/FC6MassRebuild
