@@ -1,7 +1,7 @@
 Summary: The Jack Audio Connection Kit
 Name: jack-audio-connection-kit
 Version: 0.102.20
-Release: 2.1%{?dist}
+Release: 3%{?dist}
 License: GPL/LGPL
 Group: System Environment/Daemons
 Source0: http://dl.sourceforge.net/sourceforge/jackit/%{name}-%{version}.tar.gz
@@ -14,7 +14,7 @@ BuildRequires: pkgconfig
 BuildRequires: doxygen
 BuildRequires: readline-devel, libtermcap-devel, ncurses-devel
 BuildRequires: autoconf >= 2.59, automake >= 1.9.3, libtool
-BuildRequires: libfreebob >= 1.0.0
+BuildRequires: libfreebob-devel >= 1.0.0
 
 %description
 JACK is a low-latency audio server, written primarily for the Linux
@@ -120,6 +120,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/jack_midisine
 
 %changelog
+* Sat Oct 28 2006 Andy Shevchenko <andy@smile.org.ua> 0.102.20-3
+- fix BuildRequires: libfreebob -> libfreebob-devel
+
 * Tue Oct 24 2006 Andy Shevchenko <andy@smile.org.ua> 0.102.20-2.1
 - rebuild with libfreebob (should closed #211751)
 
