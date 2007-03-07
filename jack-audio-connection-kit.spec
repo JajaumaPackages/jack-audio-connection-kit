@@ -16,11 +16,10 @@ BuildRequires: readline-devel, ncurses-devel
 BuildRequires: autoconf >= 2.59, automake >= 1.9.3, libtool
 BuildRequires: libfreebob-devel >= 1.0.0
 
-%define uid 334
-%define username jackuser
+%define gid 334
+%define groupname jackuser
 
-Requires(pre): /usr/sbin/useradd /usr/sbin/groupadd
-Requires(postun): /usr/sbin/userdel /usr/sbin/groupdel
+Requires(pre): /usr/sbin/groupadd
 
 %description
 JACK is a low-latency audio server, written primarily for the Linux
@@ -88,7 +87,7 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-/usr/sbin/groupadd %uid -r %username &>/dev/null || :
+/usr/sbin/groupadd -g %gid -r %groupname &>/dev/null || :
 
 %post -p /sbin/ldconfig
 
