@@ -1,7 +1,7 @@
 Summary: The Jack Audio Connection Kit
 Name: jack-audio-connection-kit
 Version: 0.102.20
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPL/LGPL
 Group: System Environment/Daemons
 Source0: http://dl.sourceforge.net/sourceforge/jackit/%{name}-%{version}.tar.gz
@@ -12,9 +12,15 @@ BuildRequires: alsa-lib-devel
 BuildRequires: libsndfile-devel >= 1.0.0
 BuildRequires: pkgconfig
 BuildRequires: doxygen
-BuildRequires: readline-devel, libtermcap-devel, ncurses-devel
+BuildRequires: readline-devel, ncurses-devel
 BuildRequires: autoconf >= 2.59, automake >= 1.9.3, libtool
 BuildRequires: libfreebob-devel >= 1.0.0
+
+%define uid 334
+%define username jackuser
+
+Requires(pre): /usr/sbin/useradd /usr/sbin/groupadd
+Requires(postun): /usr/sbin/userdel /usr/sbin/groupdel
 
 %description
 JACK is a low-latency audio server, written primarily for the Linux
@@ -81,6 +87,9 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%pre
+/usr/sbin/groupadd %uid -r %username &>/dev/null || :
+
 %post -p /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
@@ -120,6 +129,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/jack_midisine
 
 %changelog
+* Wed Mar 07 2007 Andy Shevchenko <andy@smile.org.ua> 0.102.20-4
+- drop libtermcap-devel build requirement (#231203)
+- create special jackuser group (#221785)
+
 * Sat Oct 28 2006 Andy Shevchenko <andy@smile.org.ua> 0.102.20-3
 - fix BuildRequires: libfreebob -> libfreebob-devel
 
