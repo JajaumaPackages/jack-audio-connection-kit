@@ -97,8 +97,8 @@ rm -rf $RPM_BUILD_ROOT
 grep -q jackuser /etc/security/limits.conf || cat >> /etc/security/limits.conf << EOF
 
 ## Automatically appended by jack-audio-connection-kit
-* jackuser rtprio 20
-* jackuser memlock 4194304
+@jackuser - rtprio 20
+@jackuser - memlock 4194304
 EOF
 
 %postun -p /sbin/ldconfig
@@ -140,7 +140,7 @@ EOF
 %changelog
 * Wed May 23 2007 Andy Shevchenko <andy@smile.org.ua> 0.103.0-1
 - update to the last official release
-- append defaults to the limits.conf (#221785)
+- append defaults to the limits.conf (#221785, #235624)
 
 * Wed Mar 07 2007 Andy Shevchenko <andy@smile.org.ua> 0.102.20-4
 - drop libtermcap-devel build requirement (#231203)
