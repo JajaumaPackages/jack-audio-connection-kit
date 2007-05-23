@@ -1,7 +1,7 @@
 Summary: The Jack Audio Connection Kit
 Name: jack-audio-connection-kit
-Version: 0.102.20
-Release: 4%{?dist}
+Version: 0.103.0
+Release: 1%{?dist}
 License: GPL/LGPL
 Group: System Environment/Daemons
 Source0: http://dl.sourceforge.net/sourceforge/jackit/%{name}-%{version}.tar.gz
@@ -20,6 +20,7 @@ BuildRequires: libfreebob-devel >= 1.0.0
 %define groupname jackuser
 
 Requires(pre): /usr/sbin/groupadd
+Requires(post): /sbin/ldconfig
 
 %description
 JACK is a low-latency audio server, written primarily for the Linux
@@ -89,7 +90,16 @@ rm -rf $RPM_BUILD_ROOT
 %pre
 /usr/sbin/groupadd -g %gid -r %groupname &>/dev/null || :
 
-%post -p /sbin/ldconfig
+%post
+/sbin/ldconfig
+
+# Add default limits for jackuser group
+grep -q jackuser /etc/security/limits.conf || cat >> /etc/security/limits.conf << EOF
+
+## Automatically appended by jack-audio-connection-kit
+* jackuser rtprio 20
+* jackuser memlock 4194304
+EOF
 
 %postun -p /sbin/ldconfig
 
@@ -128,6 +138,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/jack_midisine
 
 %changelog
+* Wed May 23 2007 Andy Shevchenko <andy@smile.org.ua> 0.103.0-1
+- update to the last official release
+- append defaults to the limits.conf (#221785)
+
 * Wed Mar 07 2007 Andy Shevchenko <andy@smile.org.ua> 0.102.20-4
 - drop libtermcap-devel build requirement (#231203)
 - create special jackuser group (#221785)
