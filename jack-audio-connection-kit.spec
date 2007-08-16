@@ -1,8 +1,8 @@
 Summary: The Jack Audio Connection Kit
 Name: jack-audio-connection-kit
 Version: 0.103.0
-Release: 1%{?dist}
-License: GPL/LGPL
+Release: 2%{?dist}
+License: GPLv2 and LGPLv2.1
 Group: System Environment/Daemons
 Source0: http://dl.sourceforge.net/sourceforge/jackit/%{name}-%{version}.tar.gz
 Source1: %{name}-README.Fedora
@@ -16,10 +16,9 @@ BuildRequires: readline-devel, ncurses-devel
 BuildRequires: autoconf >= 2.59, automake >= 1.9.3, libtool
 BuildRequires: libfreebob-devel >= 1.0.0
 
-%define gid 334
 %define groupname jackuser
 
-Requires(pre): /usr/sbin/groupadd
+Requires(pre): shadow-utils
 Requires(post): /sbin/ldconfig
 
 %description
@@ -88,7 +87,8 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-/usr/sbin/groupadd -g %gid -r %groupname &>/dev/null || :
+getent group %groupname >/dev/null || groupadd -r %groupname
+exit 0
 
 %post
 /sbin/ldconfig
@@ -138,6 +138,11 @@ EOF
 %{_bindir}/jack_midisine
 
 %changelog
+* Thu Aug 16 2007 Andy Shevchenko <andy@smile.org.ua> 0.103.0-2
+- fix according to new guidelines:
+  - License tag
+  - group creation
+
 * Wed May 23 2007 Andy Shevchenko <andy@smile.org.ua> 0.103.0-1
 - update to the last official release
 - append defaults to the limits.conf (#221785, #235624)
