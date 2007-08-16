@@ -1,8 +1,8 @@
 Summary: The Jack Audio Connection Kit
 Name: jack-audio-connection-kit
 Version: 0.103.0
-Release: 2%{?dist}
-License: GPLv2 and LGPLv2.1
+Release: 3%{?dist}
+License: GPLv2 and LGPLv2
 Group: System Environment/Daemons
 Source0: http://dl.sourceforge.net/sourceforge/jackit/%{name}-%{version}.tar.gz
 Source1: %{name}-README.Fedora
@@ -138,7 +138,7 @@ EOF
 %{_bindir}/jack_midisine
 
 %changelog
-* Thu Aug 16 2007 Andy Shevchenko <andy@smile.org.ua> 0.103.0-2
+* Thu Aug 16 2007 Andy Shevchenko <andy@smile.org.ua> 0.103.0-3
 - fix according to new guidelines:
   - License tag
   - group creation
