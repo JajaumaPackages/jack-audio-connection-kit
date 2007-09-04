@@ -1,10 +1,10 @@
 Summary: The Jack Audio Connection Kit
 Name: jack-audio-connection-kit
 Version: 0.103.0
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2 and LGPLv2
 Group: System Environment/Daemons
-Source0: http://dl.sourceforge.net/sourceforge/jackit/%{name}-%{version}.tar.gz
+Source0: http://downloads.sourceforge.net/jackit/%{name}-%{version}.tar.gz
 Source1: %{name}-README.Fedora
 URL: http://www.jackaudio.org
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -94,7 +94,7 @@ exit 0
 /sbin/ldconfig
 
 # Add default limits for jackuser group
-grep -q jackuser /etc/security/limits.conf || cat >> /etc/security/limits.conf << EOF
+grep -q %groupname /etc/security/limits.conf || cat >> /etc/security/limits.conf << EOF
 
 ## Automatically appended by jack-audio-connection-kit
 @jackuser - rtprio 20
@@ -138,6 +138,9 @@ EOF
 %{_bindir}/jack_midisine
 
 %changelog
+* Tue Sep 04 2007 Andy Shevchenko <andy@smile.org.ua> 0.103.0-4
+- fix Source Forge's URL scheme
+
 * Thu Aug 16 2007 Andy Shevchenko <andy@smile.org.ua> 0.103.0-3
 - fix according to new guidelines:
   - License tag
