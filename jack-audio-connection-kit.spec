@@ -1,7 +1,7 @@
 Summary: The Jack Audio Connection Kit
 Name: jack-audio-connection-kit
 Version: 0.103.0
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2 and LGPLv2
 Group: System Environment/Daemons
 Source0: http://downloads.sourceforge.net/jackit/%{name}-%{version}.tar.gz
@@ -83,6 +83,9 @@ rm -fr $RPM_BUILD_ROOT%{_docdir}
 rm -f $RPM_BUILD_ROOT%{_libdir}/jack/*.la
 rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
 
+# Fix timestamps to avoid multiarch conflicts
+find doc/reference -type f | xargs touch -r doc/reference.doxygen.in
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -138,6 +141,9 @@ EOF
 %{_bindir}/jack_midisine
 
 %changelog
+* Sat Oct 20 2007 Andy Shevchenko <andy@smile.org.ua> 0.103.0-5
+- fix timestamps to avoid multiarch conflicts (#341621)
+
 * Tue Sep 04 2007 Andy Shevchenko <andy@smile.org.ua> 0.103.0-4
 - fix Source Forge's URL scheme
 
