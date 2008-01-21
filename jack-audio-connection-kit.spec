@@ -1,7 +1,7 @@
 Summary: The Jack Audio Connection Kit
 Name: jack-audio-connection-kit
-Version: 0.103.0
-Release: 5%{?dist}
+Version: 0.109.0
+Release: 1%{?dist}
 License: GPLv2 and LGPLv2
 Group: System Environment/Daemons
 Source0: http://downloads.sourceforge.net/jackit/%{name}-%{version}.tar.gz
@@ -90,18 +90,18 @@ find doc/reference -type f | xargs touch -r doc/reference.doxygen.in
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-getent group %groupname >/dev/null || groupadd -r %groupname
+getent group %groupname > /dev/null || groupadd -r %groupname
 exit 0
 
 %post
 /sbin/ldconfig
 
 # Add default limits for jackuser group
-grep -q %groupname /etc/security/limits.conf || cat >> /etc/security/limits.conf << EOF
+grep -q %groupname /etc/security/limits.conf > /dev/null 2>&1 || cat >> /etc/security/limits.conf << EOF
 
 ## Automatically appended by jack-audio-connection-kit
-@jackuser - rtprio 20
-@jackuser - memlock 4194304
+@%groupname - rtprio 20
+@%groupname - memlock 4194304
 EOF
 
 %postun -p /sbin/ldconfig
@@ -129,18 +129,25 @@ EOF
 %files example-clients
 %defattr(-,root,root)
 %{_bindir}/jackrec
+%{_bindir}/jack_alias
 %{_bindir}/jack_connect
 %{_bindir}/jack_disconnect
+%{_bindir}/jack_evmon
 %{_bindir}/jack_impulse_grabber
 %{_bindir}/jack_lsp
 %{_bindir}/jack_metro
 %{_bindir}/jack_showtime
+%{_bindir}/jack_transport
 %{_bindir}/jack_monitor_client
 %{_bindir}/jack_simple_client
 %{_bindir}/jack_midiseq
 %{_bindir}/jack_midisine
 
 %changelog
+* Mon Jan 21 2008 Andy Shevchenko <andy@smile.org.ua> 0.109.0-1
+- update to the last official release (#429162)
+- shut up the postinstall script (#359291)
+
 * Sat Oct 20 2007 Andy Shevchenko <andy@smile.org.ua> 0.103.0-5
 - fix timestamps to avoid multiarch conflicts (#341621)
 
