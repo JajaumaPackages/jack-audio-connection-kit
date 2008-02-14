@@ -1,7 +1,7 @@
 Summary: The Jack Audio Connection Kit
 Name: jack-audio-connection-kit
 Version: 0.109.2
-Release: 1%{?dist}
+Release: 1%{?dist}.1
 License: GPLv2 and LGPLv2
 Group: System Environment/Daemons
 Source0: http://downloads.sourceforge.net/jackit/%{name}-%{version}.tar.gz
@@ -144,7 +144,7 @@ EOF
 %{_bindir}/jack_midisine
 
 %changelog
-* Wed Feb 13 2008 Andy Shevchenko <andy@smile.org.ua> 0.109.2-1
+* Wed Feb 13 2008 Andy Shevchenko <andy@smile.org.ua> 0.109.2-1.1
 - update to the last official release
 
 * Mon Jan 21 2008 Andy Shevchenko <andy@smile.org.ua> 0.109.0-1
