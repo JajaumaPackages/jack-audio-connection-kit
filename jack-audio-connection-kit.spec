@@ -1,11 +1,12 @@
 Summary: The Jack Audio Connection Kit
 Name: jack-audio-connection-kit
 Version: 0.109.2
-Release: 1%{?dist}.1
+Release: 2%{?dist}
 License: GPLv2 and LGPLv2
 Group: System Environment/Daemons
 Source0: http://downloads.sourceforge.net/jackit/%{name}-%{version}.tar.gz
 Source1: %{name}-README.Fedora
+Patch0: jack-audio-connection-kit-0.109.2-bz451531.patch
 URL: http://www.jackaudio.org
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: alsa-lib-devel
@@ -53,6 +54,9 @@ Small example clients that use the Jack Audio Connection Kit.
 
 %prep
 %setup -q
+%ifarch ppc64
+%patch0 -p0 -b .bz451531
+%endif
 
 %build
 # x86_64 issue reported by Rudolf Kastl (not checked, but not bad).
@@ -144,6 +148,10 @@ EOF
 %{_bindir}/jack_midisine
 
 %changelog
+* Sun Jul 20 2008 Andy Shevchenko <andy@smile.org.ua> 0.109.2-2
+- apply patch to be work on ppc64 (#451531)
+- update README.Fedora to describe integration jack with pulseaudio (#455193)
+
 * Wed Feb 13 2008 Andy Shevchenko <andy@smile.org.ua> 0.109.2-1.1
 - update to the last official release
 
