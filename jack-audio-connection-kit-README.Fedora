@@ -11,7 +11,7 @@ Install the required packages:
 Add yourself to the pulse-rt and jackuser groups.
     usermod -a -G pulse-rt,jackaudio "<your username>"
 
-Edit /etc/security/limits.conf:
+Check /etc/security/limits.conf (our package should provide these changes):
 
 @jackuser - rtprio 20
 @jackuser - memlock 4194304
@@ -23,28 +23,9 @@ Switch to your normal user account.
 Create ~/bin subdirectory if absent:
     mkdir -p ~/bin
 
-Create the pulseaudio start file ~/bin/jack.pa:
-
-#!/usr/bin/pulseaudio -nF
-
-load-module module-jack-sink
-load-module module-jack-source
-
-load-module module-native-protocol-unix
-load-module module-volume-restore
-load-module module-default-device-restore
-load-module module-rescue-streams
-load-module module-suspend-on-idle
-.ifexists module-gconf.so
-.nofail
-load-module module-gconf
-.fail
-.endif
-.ifexists module-x11-publish.so
-.nofail
-load-module module-x11-publish
-.fail
-.endif
+Copy the pulseaudio start file:
+    cp /usr/share/doc/jack-audio-connection-kit-*/jack-audio-connection-kit.pa ~/bin/jack.pa
+    chmod 755 ~/bin/jack.pa
 
 Close all your sessions and relogin to get the new group permissions and
 limits.

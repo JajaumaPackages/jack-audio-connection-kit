@@ -1,11 +1,12 @@
 Summary: The Jack Audio Connection Kit
 Name: jack-audio-connection-kit
 Version: 0.109.2
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2 and LGPLv2
 Group: System Environment/Daemons
 Source0: http://downloads.sourceforge.net/jackit/%{name}-%{version}.tar.gz
 Source1: %{name}-README.Fedora
+Source2: %{name}-script.pa
 Patch0: jack-audio-connection-kit-0.109.2-bz451531.patch
 URL: http://www.jackaudio.org
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -18,9 +19,11 @@ BuildRequires: autoconf >= 2.59, automake >= 1.9.3, libtool
 BuildRequires: libfreebob-devel >= 1.0.0
 
 %define groupname jackuser
+%define pagroup   pulse-rt
 
 Requires(pre): shadow-utils
 Requires(post): /sbin/ldconfig
+Requires(post): pam
 
 %description
 JACK is a low-latency audio server, written primarily for the Linux
@@ -80,6 +83,9 @@ make install DESTDIR=$RPM_BUILD_ROOT
 # prepare README.Fedora for documentation including
 install -p -m644 %{SOURCE1} README.Fedora
 
+# install pulseaudio script for jack (as documentation part)
+install -p -m644 %{SOURCE2} jack-audio-connection-kit.pa
+
 # remove extra install of the documentation
 rm -fr $RPM_BUILD_ROOT%{_docdir}
 
@@ -108,12 +114,21 @@ grep -q %groupname /etc/security/limits.conf > /dev/null 2>&1 || cat >> /etc/sec
 @%groupname - memlock 4194304
 EOF
 
+# Add default limits for pulse-rt group
+grep -q %pagroup /etc/security/limits.conf > /dev/null 2>&1 || cat >> /etc/security/limits.conf << EOF
+
+## Automatically appended by jack-audio-connection-kit
+@%pagroup - rtprio 20
+@%pagroup - nice -20
+EOF
+
 %postun -p /sbin/ldconfig
 
 %files 
 %defattr(-,root,root)
 %doc AUTHORS TODO COPYING*
 %doc README.Fedora
+%doc jack-audio-connection-kit.pa
 %{_bindir}/jackd
 %{_bindir}/jack_load
 %{_bindir}/jack_unload
@@ -148,6 +163,13 @@ EOF
 %{_bindir}/jack_midisine
 
 %changelog
+* Mon Jul 28 2008 Andy Shevchenko <andy@smile.org.ua> 0.109.2-3
+- add a new requirement to be ensure we have /etc/security for postinstall
+  script (#359291, #456830)
+- provide a pulseaudio start script from README.Fedora
+- append values for pulse-rt group to the limits.conf
+- update README.Fedora regarding to the recent changes
+
 * Sun Jul 20 2008 Andy Shevchenko <andy@smile.org.ua> 0.109.2-2
 - apply patch to be work on ppc64 (#451531)
 - update README.Fedora to describe integration jack with pulseaudio (#455193)
