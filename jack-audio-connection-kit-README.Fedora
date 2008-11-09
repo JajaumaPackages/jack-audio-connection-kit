@@ -9,7 +9,7 @@ Install the required packages:
     yum install pulseaudio-module-jack alsa-plugins-jack jack-audio-connection-kit 
 
 Add yourself to the pulse-rt and jackuser groups.
-    usermod -a -G pulse-rt,jackaudio "<your username>"
+    usermod -a -G pulse-rt,jackuser "<your username>"
 
 Check /etc/security/limits.conf (our package should provide these changes):
 
@@ -37,14 +37,14 @@ Start the jack daemon (your parameters may be different):
     jackd -R -P4 -dalsa -r44100 -p512 -n4 -D -Chw:0 -Phw:0
 
 Start the pulseaudio daemon:
-    pulseaudio -nF ~/bin/jack.pa
+    ~/bin/jack.pa
 
 Now everything should work.
 
-Next chapter describes steps for older Fedora vesions.
-
 
 	RUNNING JACK SERVER IN REALTIME MODE
+
+NOTE: this chapter describes steps for older Fedora vesions.
 
 The JACK server jackd has the capability to run in a real-time mode
 which greatly decreases the chance of audio glitches. The real-time mode
