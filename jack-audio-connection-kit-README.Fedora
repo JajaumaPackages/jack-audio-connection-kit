@@ -31,15 +31,26 @@ Close all your sessions and relogin to get the new group permissions and
 limits.
 
 Kill the current pulseaudio daemon:
-    killall pulseaudio
+    pulseaudio -k
 
 Start the jack daemon (your parameters may be different):
     jackd -R -P4 -dalsa -r44100 -p512 -n4 -D -Chw:0 -Phw:0
+or use
+    qjackctl -s
+if you have it installed and configured.
 
 Start the pulseaudio daemon:
     ~/bin/jack.pa
 
 Now everything should work.
+
+
+	USING ALSA DIRECTLY
+
+Due to big amount of text lines and a few necessary graphics here is only link
+to very useful article about jack-audio-connection-kit and ALSA. So, go by
+following link:
+    http://www.legg.uklinux.net/rosegarden_sound_howto_fc7.html
 
 
 	RUNNING JACK SERVER IN REALTIME MODE
