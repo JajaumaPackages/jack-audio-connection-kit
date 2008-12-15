@@ -1,13 +1,12 @@
 Summary: The Jack Audio Connection Kit
 Name: jack-audio-connection-kit
-Version: 0.109.2
-Release: 3%{?dist}
+Version: 0.116.1
+Release: 1%{?dist}
 License: GPLv2 and LGPLv2
 Group: System Environment/Daemons
-Source0: http://downloads.sourceforge.net/jackit/%{name}-%{version}.tar.gz
+Source0: http://www.jackaudio.org/downloads/%{name}-%{version}.tar.gz
 Source1: %{name}-README.Fedora
 Source2: %{name}-script.pa
-Patch0: jack-audio-connection-kit-0.109.2-bz451531.patch
 URL: http://www.jackaudio.org
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: alsa-lib-devel
@@ -57,9 +56,6 @@ Small example clients that use the Jack Audio Connection Kit.
 
 %prep
 %setup -q
-%ifarch ppc64
-%patch0 -p0 -b .bz451531
-%endif
 
 %build
 # x86_64 issue reported by Rudolf Kastl (not checked, but not bad).
@@ -132,17 +128,18 @@ EOF
 %{_bindir}/jackd
 %{_bindir}/jack_load
 %{_bindir}/jack_unload
-%{_bindir}/jack_bufsize
 %{_bindir}/jack_freewheel
 %{_libdir}/jack/
 %{_mandir}/man1/jack*.1*
 %{_libdir}/libjack.so.*
+%{_libdir}/libjackserver.so.*
 
 %files devel
 %defattr(-,root,root)
 %doc doc/reference
 %{_includedir}/jack/
 %{_libdir}/libjack.so
+%{_libdir}/libjackserver.so
 %{_libdir}/pkgconfig/jack.pc
 
 %files example-clients
@@ -159,10 +156,16 @@ EOF
 %{_bindir}/jack_transport
 %{_bindir}/jack_monitor_client
 %{_bindir}/jack_simple_client
+%{_bindir}/jack_transport_client
 %{_bindir}/jack_midiseq
 %{_bindir}/jack_midisine
 
 %changelog
+* Sun Dec 14 2008 Andy Shevchenko <andy@smile.org.ua> - 0.116.1-1
+- update to last official release
+- update URL tag
+- update file list accordingly
+
 * Mon Jul 28 2008 Andy Shevchenko <andy@smile.org.ua> 0.109.2-3
 - add a new requirement to be ensure we have /etc/security for postinstall
   script (#359291, #456830)
