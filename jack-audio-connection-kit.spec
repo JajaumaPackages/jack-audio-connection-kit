@@ -1,12 +1,13 @@
 Summary: The Jack Audio Connection Kit
 Name: jack-audio-connection-kit
 Version: 0.116.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2 and LGPLv2
 Group: System Environment/Daemons
 Source0: http://www.jackaudio.org/downloads/%{name}-%{version}.tar.gz
 Source1: %{name}-README.Fedora
 Source2: %{name}-script.pa
+Source3: %{name}-no_date_footer.html
 URL: http://www.jackaudio.org
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: alsa-lib-devel
@@ -23,6 +24,9 @@ BuildRequires: libfreebob-devel >= 1.0.0
 Requires(pre): shadow-utils
 Requires(post): /sbin/ldconfig
 Requires(post): pam
+
+# To fix multilib conflicts take a basepoint as following
+%define doxyfile	doc/reference.doxygen.in
 
 %description
 JACK is a low-latency audio server, written primarily for the Linux
@@ -57,6 +61,14 @@ Small example clients that use the Jack Audio Connection Kit.
 %prep
 %setup -q
 
+# Put custom HTML_FOOTER to avoid timestamp inside
+# (recipe was taken from http://fedoraproject.org/wiki/PackagingDrafts/MultilibTricks)
+cp %{SOURCE3} doc/no_date_footer.html
+# Fix Doxyfile - apply custom html footer
+sed -e 's,^HTML_FOOTER[ \t]*=.*,HTML_FOOTER = no_date_footer.html,' %{doxyfile} > %{doxyfile}.new
+touch -r %{doxyfile} %{doxyfile}.new
+mv -f %{doxyfile}.new %{doxyfile}
+
 %build
 # x86_64 issue reported by Rudolf Kastl (not checked, but not bad).
 autoreconf --force --install
@@ -90,7 +102,7 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/jack/*.la
 rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
 
 # Fix timestamps to avoid multiarch conflicts
-find doc/reference -type f | xargs touch -r doc/reference.doxygen.in
+find doc/reference -type f | xargs touch -r %{doxyfile}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -161,6 +173,9 @@ EOF
 %{_bindir}/jack_midisine
 
 %changelog
+* Mon Dec 29 2008 Andy Shevchenko <andy@smile.org.ua> - 0.116.1-2
+- fix multiarch conflict again (#477718, #341621)
+
 * Sun Dec 14 2008 Andy Shevchenko <andy@smile.org.ua> - 0.116.1-1
 - update to last official release
 - update URL tag
