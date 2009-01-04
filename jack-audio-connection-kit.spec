@@ -1,7 +1,7 @@
 Summary: The Jack Audio Connection Kit
 Name: jack-audio-connection-kit
 Version: 0.116.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2 and LGPLv2
 Group: System Environment/Daemons
 Source0: http://www.jackaudio.org/downloads/%{name}-%{version}.tar.gz
@@ -64,8 +64,11 @@ Small example clients that use the Jack Audio Connection Kit.
 # Put custom HTML_FOOTER to avoid timestamp inside
 # (recipe was taken from http://fedoraproject.org/wiki/PackagingDrafts/MultilibTricks)
 cp %{SOURCE3} doc/no_date_footer.html
-# Fix Doxyfile - apply custom html footer
-sed -e 's,^HTML_FOOTER[ \t]*=.*,HTML_FOOTER = no_date_footer.html,' %{doxyfile} > %{doxyfile}.new
+# Fix Doxyfile:
+#  - apply custom html footer (#477718, #341621)
+#  - avoid font packaging (workaround for #477402, fix will come with #478747)
+sed -e 's,^HTML_FOOTER[ \t]*=.*,HTML_FOOTER = no_date_footer.html,;
+        s,^GENERATE_LATEX[ \t]*=.*,GENERATE_LATEX = NO,;' %{doxyfile} > %{doxyfile}.new
 touch -r %{doxyfile} %{doxyfile}.new
 mv -f %{doxyfile}.new %{doxyfile}
 
@@ -173,6 +176,9 @@ EOF
 %{_bindir}/jack_midisine
 
 %changelog
+* Sun Jan 04 2009 Andy Shevchenko <andy@smile.org.ua> - 0.116.1-3
+- avoid creation of the LaTeX documentation (temporary fix for #477402)
+
 * Mon Dec 29 2008 Andy Shevchenko <andy@smile.org.ua> - 0.116.1-2
 - fix multiarch conflict again (#477718, #341621)
 
