@@ -1,13 +1,14 @@
 Summary: The Jack Audio Connection Kit
 Name: jack-audio-connection-kit
 Version: 0.116.1
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2 and LGPLv2
 Group: System Environment/Daemons
 Source0: http://www.jackaudio.org/downloads/%{name}-%{version}.tar.gz
 Source1: %{name}-README.Fedora
 Source2: %{name}-script.pa
 Source3: %{name}-no_date_footer.html
+Source4: %{name}-limits.conf
 URL: http://www.jackaudio.org
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: alsa-lib-devel
@@ -23,7 +24,7 @@ BuildRequires: libfreebob-devel >= 1.0.0
 
 Requires(pre): shadow-utils
 Requires(post): /sbin/ldconfig
-Requires(post): pam
+Requires: pam
 
 # To fix multilib conflicts take a basepoint as following
 %define doxyfile	doc/reference.doxygen.in
@@ -91,11 +92,16 @@ rm -rf $RPM_BUILD_ROOT
 # added to it and messes up part of the install
 make install DESTDIR=$RPM_BUILD_ROOT
 
+# install our limits to the /etc/security/limits.d
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/security/limits.d
+sed -e 's,@groupname@,%groupname,g; s,@pagroup@,%pagroup,g;' \
+    %{SOURCE4} > $RPM_BUILD_ROOT%{_sysconfdir}/security/limits.d/99-jack.conf
+
 # prepare README.Fedora for documentation including
 install -p -m644 %{SOURCE1} README.Fedora
 
 # install pulseaudio script for jack (as documentation part)
-install -p -m644 %{SOURCE2} jack-audio-connection-kit.pa
+install -p -m644 %{SOURCE2} jack.pa
 
 # remove extra install of the documentation
 rm -fr $RPM_BUILD_ROOT%{_docdir}
@@ -114,24 +120,7 @@ rm -rf $RPM_BUILD_ROOT
 getent group %groupname > /dev/null || groupadd -r %groupname
 exit 0
 
-%post
-/sbin/ldconfig
-
-# Add default limits for jackuser group
-grep -q %groupname /etc/security/limits.conf > /dev/null 2>&1 || cat >> /etc/security/limits.conf << EOF
-
-## Automatically appended by jack-audio-connection-kit
-@%groupname - rtprio 20
-@%groupname - memlock 4194304
-EOF
-
-# Add default limits for pulse-rt group
-grep -q %pagroup /etc/security/limits.conf > /dev/null 2>&1 || cat >> /etc/security/limits.conf << EOF
-
-## Automatically appended by jack-audio-connection-kit
-@%pagroup - rtprio 20
-@%pagroup - nice -20
-EOF
+%post -p /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
 
@@ -139,7 +128,7 @@ EOF
 %defattr(-,root,root)
 %doc AUTHORS TODO COPYING*
 %doc README.Fedora
-%doc jack-audio-connection-kit.pa
+%doc jack.pa
 %{_bindir}/jackd
 %{_bindir}/jack_load
 %{_bindir}/jack_unload
@@ -148,6 +137,7 @@ EOF
 %{_mandir}/man1/jack*.1*
 %{_libdir}/libjack.so.*
 %{_libdir}/libjackserver.so.*
+%{_sysconfdir}/security/limits.d/*.conf
 
 %files devel
 %defattr(-,root,root)
@@ -176,6 +166,10 @@ EOF
 %{_bindir}/jack_midisine
 
 %changelog
+* Sun Jun 21 2009 Andy Shevchenko <andy@smile.org.ua> - 0.116.1-5
+- create file under /etc/security/limits.d instead of limits.conf hack (#506583)
+- rename jack-audio-connection-kit.pa to jack.pa in the documentation part
+
 * Wed Feb 25 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.116.1-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
 
