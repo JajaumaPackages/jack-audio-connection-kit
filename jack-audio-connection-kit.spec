@@ -1,7 +1,7 @@
 Summary: The Jack Audio Connection Kit
 Name: jack-audio-connection-kit
 Version: 0.116.1
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2 and LGPLv2
 Group: System Environment/Daemons
 Source0: http://www.jackaudio.org/downloads/%{name}-%{version}.tar.gz
@@ -166,6 +166,9 @@ exit 0
 %{_bindir}/jack_midisine
 
 %changelog
+* Fri Jul 24 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.116.1-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
+
 * Sun Jun 21 2009 Andy Shevchenko <andy@smile.org.ua> - 0.116.1-5
 - create file under /etc/security/limits.d instead of limits.conf hack (#506583)
 - rename jack-audio-connection-kit.pa to jack.pa in the documentation part
