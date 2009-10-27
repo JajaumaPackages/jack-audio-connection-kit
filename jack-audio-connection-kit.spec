@@ -1,7 +1,7 @@
 Summary: The Jack Audio Connection Kit
 Name: jack-audio-connection-kit
 Version: 0.116.1
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv2 and LGPLv2
 Group: System Environment/Daemons
 Source0: http://www.jackaudio.org/downloads/%{name}-%{version}.tar.gz
@@ -17,7 +17,9 @@ BuildRequires: pkgconfig
 BuildRequires: doxygen
 BuildRequires: readline-devel, ncurses-devel
 BuildRequires: autoconf >= 2.59, automake >= 1.9.3, libtool
+%ifnarch s390 s390x
 BuildRequires: libfreebob-devel >= 1.0.0
+%endif
 
 %define groupname jackuser
 %define pagroup   pulse-rt
@@ -79,7 +81,9 @@ autoreconf --force --install
 
 %configure \
     --with-html-dir=%{_docdir} \
+%ifnarch s390 s390x
     --enable-freebob \
+%endif
     --disable-oss \
     --disable-portaudio \
     --with-default-tmpdir=/dev/shm
@@ -166,6 +170,9 @@ exit 0
 %{_bindir}/jack_midisine
 
 %changelog
+* Tue Oct 27 2009 Dennis Gilmore <dennis@ausil.us> - 0.116.1-7
+- dont build libfreebob support on s390 arches
+
 * Fri Jul 24 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.116.1-6
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
 
