@@ -1,0 +1,35 @@
+--- jack-audio-connection-kit-0.116.1/libjack/client.c.cleanup-mb-thread	2009-11-04 14:48:04.686074485 -0500
++++ jack-audio-connection-kit-0.116.1/libjack/client.c	2009-11-04 14:48:40.198074109 -0500
+@@ -970,6 +970,7 @@ jack_client_open_aux (const char *client
+ 	/* validate parameters */
+ 	if ((options & ~JackOpenOptions)) {
+ 		*status |= (JackFailure|JackInvalidOption);
++		jack_messagebuffer_exit ();
+ 		return NULL;
+ 	}
+ 
+@@ -984,6 +985,7 @@ jack_client_open_aux (const char *client
+ 	*/
+ 	if (jack_get_tmpdir ()) {
+ 		*status |= JackFailure;
++		jack_messagebuffer_exit ();
+ 		return NULL;
+ 	}
+ 
+@@ -994,6 +996,7 @@ jack_client_open_aux (const char *client
+ 
+ 	if (jack_request_client (ClientExternal, client_name, options, status,
+ 				 &va, &res, &req_fd)) {
++		jack_messagebuffer_exit ();
+ 		return NULL;
+ 	}
+ 
+@@ -1088,6 +1091,8 @@ jack_client_open_aux (const char *client
+  	return client;
+ 	
+   fail:
++	jack_messagebuffer_exit ();
++
+ 	if (client->engine) {
+ 		jack_release_shm (&client->engine_shm);
+ 		client->engine = 0;
