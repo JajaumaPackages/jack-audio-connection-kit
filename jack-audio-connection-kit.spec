@@ -1,6 +1,6 @@
 Summary: The Jack Audio Connection Kit
 Name: jack-audio-connection-kit
-Version: 0.116.2
+Version: 0.118.0
 Release: 1%{?dist}
 License: GPLv2 and LGPLv2
 Group: System Environment/Daemons
@@ -9,7 +9,6 @@ Source1: %{name}-README.Fedora
 Source2: %{name}-script.pa
 Source3: %{name}-no_date_footer.html
 Source4: %{name}-limits.conf
-Patch0: jack-audio-connection-kit-0.116.1-cleanup-mb-thread.patch
 URL: http://www.jackaudio.org
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: alsa-lib-devel
@@ -64,8 +63,6 @@ Small example clients that use the Jack Audio Connection Kit.
 
 %prep
 %setup -q
-
-%patch0 -p1 -b .cleanup-mb-thread
 
 # Put custom HTML_FOOTER to avoid timestamp inside
 # (recipe was taken from http://fedoraproject.org/wiki/PackagingDrafts/MultilibTricks)
@@ -158,14 +155,18 @@ exit 0
 %defattr(-,root,root)
 %{_bindir}/jackrec
 %{_bindir}/jack_alias
+%{_bindir}/jack_bufsize
 %{_bindir}/jack_connect
 %{_bindir}/jack_disconnect
 %{_bindir}/jack_evmon
 %{_bindir}/jack_impulse_grabber
 %{_bindir}/jack_lsp
 %{_bindir}/jack_metro
+%{_bindir}/jack_netsource
+%{_bindir}/jack_samplerate
 %{_bindir}/jack_showtime
 %{_bindir}/jack_transport
+%{_bindir}/jack_wait
 %{_bindir}/jack_monitor_client
 %{_bindir}/jack_simple_client
 %{_bindir}/jack_transport_client
@@ -173,6 +174,11 @@ exit 0
 %{_bindir}/jack_midisine
 
 %changelog
+* Sat Nov 21 2009 Andy Shevchenko <andy@smile.org.ua> - 0.118.0-1
+- update to 0.118.0 (should fix #533419)
+- remove upstreamed patch
+- append new binaries to -example-clients subpackage
+
 * Wed Nov  4 2009 Tom "spot" Callaway <tcallawa@redhat.com> - 0.116.2-8
 - update to 0.116.2
 - make sure we cleanup threads that we open, fixes segfaults (thanks to Ray Strode)
