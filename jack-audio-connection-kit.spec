@@ -1,42 +1,56 @@
-Summary: The Jack Audio Connection Kit
-Name: jack-audio-connection-kit
-Version: 0.118.0
-Release: 1%{?dist}
-License: GPLv2 and LGPLv2
-Group: System Environment/Daemons
-Source0: http://www.jackaudio.org/downloads/%{name}-%{version}.tar.gz
-Source1: %{name}-README.Fedora
-Source2: %{name}-script.pa
-Source3: %{name}-no_date_footer.html
-Source4: %{name}-limits.conf
-URL: http://www.jackaudio.org
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires: alsa-lib-devel
-BuildRequires: libsndfile-devel >= 1.0.0
-BuildRequires: pkgconfig
-BuildRequires: doxygen
-BuildRequires: readline-devel, ncurses-devel
-BuildRequires: autoconf >= 2.59, automake >= 1.9.3, libtool
-%ifnarch s390 s390x
-BuildRequires: libfreebob-devel >= 1.0.0
-%endif
+%global groupname jackuser
+%global pagroup   pulse-rt
 
-%define groupname jackuser
-%define pagroup   pulse-rt
+Summary:       The Jack Audio Connection Kit
+Name:          jack-audio-connection-kit
+Version:       1.9.5
+Release:       1%{?dist}
+# The entire source (~500 files) is a mixture of these three licenses
+License:       GPLv2 and GPLv2+ and LGPLv2+
+Group:         System Environment/Daemons
+URL:           http://www.jackaudio.org
+Source0:       http://www.grame.fr/~letz/jack-%{version}.tar.bz2
+Source1:       %{name}-README.Fedora
+Source2:       %{name}-script.pa
+Source3:       %{name}-limits.conf
+# No-date-footer hack to remove dates from doxygen documentation
+Patch0:        jack-audio-connection-kit-no_date_footer.patch
+# Enables renaming of the jack ports based on a configuration file
+# Under discussion upstream. We need it for CCRMA compatibility
+Patch1:        jack-infrastructure.patch
+# Fix DSO linking
+Patch2:        jack-DSO-linking.patch
+# Manpages. From ustream trunk
+Patch3:        jack-manpages.patch
+# Make jack compatible with both the Fedora kernel and the realtime kernel
+Patch4:        jack-realtime-compat.patch
+# Compile against celt-0.8.0
+Patch5:        jack-celt08.patch
+
+BuildRoot:     %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+BuildRequires: alsa-lib-devel
+BuildRequires: dbus-devel
+BuildRequires: celt-devel
+BuildRequires: doxygen
+BuildRequires: expat-devel
+BuildRequires: libffado-devel
+BuildRequires: libfreebob-devel
+BuildRequires: libsamplerate-devel
+BuildRequires: libsndfile-devel
+BuildRequires: ncurses-devel
+BuildRequires: pkgconfig
+BuildRequires: python2
+BuildRequires: readline-devel
 
 Requires(pre): shadow-utils
-Requires(post): /sbin/ldconfig
-Requires: pam
-
-# To fix multilib conflicts take a basepoint as following
-%define doxyfile	doc/reference.doxygen.in
+Requires:      pam
 
 %description
 JACK is a low-latency audio server, written primarily for the Linux
 operating system. It can connect a number of different applications to
 an audio device, as well as allowing them to share audio between
-themselves. Its clients can run in their own processes (ie. as a
-normal application), or can they can run within a JACK server (ie. a
+themselves. Its clients can run in their own processes (i.e. as a
+normal application), or can they can run within a JACK server (i.e. a
 "plugin").
 
 JACK is different from other audio server efforts in that it has been
@@ -45,61 +59,58 @@ work. This means that it focuses on two key areas: synchronous
 execution of all clients, and low latency operation.
 
 %package devel
-Summary: Header files for Jack
-Group: Development/Libraries
-Requires: %{name} = %{version}
-Requires: pkgconfig
+Summary:       Header files for Jack
+Group:         Development/Libraries
+Requires:      %{name} = %{version}-%{release}
+Requires:      pkgconfig
 
 %description devel
 Header files for the Jack Audio Connection Kit.
 
 %package example-clients
-Summary: Example clients that use Jack 
-Group: Applications/Multimedia
-Requires: %{name} = %{version}
+Summary:       Example clients that use Jack 
+Group:         Applications/Multimedia
+Requires:      %{name} = %{version}-%{release}
 
 %description example-clients
 Small example clients that use the Jack Audio Connection Kit.
 
 %prep
-%setup -q
+%setup -q -n jack-%{version}
+%patch0 -p1 -b .nodate
+%patch1 -p1 -b .infra
+%patch2 -p1 -b .linking
+%patch3 -p1
+%patch4 -p1
+%if 0%{?fedora} > 13
+%patch5 -p1 -b .celt08
+%endif
 
-# Put custom HTML_FOOTER to avoid timestamp inside
-# (recipe was taken from http://fedoraproject.org/wiki/PackagingDrafts/MultilibTricks)
-cp %{SOURCE3} doc/no_date_footer.html
-# Fix Doxyfile:
-#  - apply custom html footer (#477718, #341621)
-#  - avoid font packaging (workaround for #477402, fix will come with #478747)
-sed -e 's,^HTML_FOOTER[ \t]*=.*,HTML_FOOTER = no_date_footer.html,;
-        s,^GENERATE_LATEX[ \t]*=.*,GENERATE_LATEX = NO,;' %{doxyfile} > %{doxyfile}.new
-touch -r %{doxyfile} %{doxyfile}.new
-mv -f %{doxyfile}.new %{doxyfile}
+# Fix encoding issues
+for file in ChangeLog README TODO; do
+   sed 's|\r||' $file > $file.tmp
+   iconv -f ISO-8859-1 -t UTF8 $file.tmp > $file.tmp2
+   touch -r $file $file.tmp2
+   mv -f $file.tmp2 $file
+done
 
 %build
-# x86_64 issue reported by Rudolf Kastl (not checked, but not bad).
-autoreconf --force --install
-
-%configure \
-    --with-html-dir=%{_docdir} \
-%ifnarch s390 s390x
-    --enable-freebob \
-%endif
-    --disable-oss \
-    --disable-portaudio \
-    --with-default-tmpdir=/dev/shm
-make %{?_smp_mflags}
+export CPPFLAGS="$RPM_OPT_FLAGS"
+./waf configure --prefix=%{_prefix} --libdir=/%{_lib} --doxygen --dbus --classic
+./waf build %{?_smp_mflags} -v
 
 %install
 rm -rf $RPM_BUILD_ROOT
+./waf --destdir=$RPM_BUILD_ROOT install
 
-# can't use the makeinstall macro, jack needs DESTDIR and prefix gets
-# added to it and messes up part of the install
-make install DESTDIR=$RPM_BUILD_ROOT
+# move doxygen documentation to the right place
+mv $RPM_BUILD_ROOT%{_datadir}/jack-audio-connection-kit/reference .
+rm -rf $RPM_BUILD_ROOT%{_datadir}/jack-audio-connection-kit
 
 # install our limits to the /etc/security/limits.d
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/security/limits.d
 sed -e 's,@groupname@,%groupname,g; s,@pagroup@,%pagroup,g;' \
-    %{SOURCE4} > $RPM_BUILD_ROOT%{_sysconfdir}/security/limits.d/99-jack.conf
+    %{SOURCE3} > $RPM_BUILD_ROOT%{_sysconfdir}/security/limits.d/99-jack.conf
 
 # prepare README.Fedora for documentation including
 install -p -m644 %{SOURCE1} README.Fedora
@@ -107,15 +118,11 @@ install -p -m644 %{SOURCE1} README.Fedora
 # install pulseaudio script for jack (as documentation part)
 install -p -m644 %{SOURCE2} jack.pa
 
-# remove extra install of the documentation
-rm -fr $RPM_BUILD_ROOT%{_docdir}
+# For compatibility with jack1
+mv $RPM_BUILD_ROOT%{_bindir}/jack_rec $RPM_BUILD_ROOT%{_bindir}/jackrec
 
-# remove *.la files
-rm -f $RPM_BUILD_ROOT%{_libdir}/jack/*.la
-rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
-
-# Fix timestamps to avoid multiarch conflicts
-find doc/reference -type f | xargs touch -r %{doxyfile}
+# Fix permissions of the modules
+chmod 755 $RPM_BUILD_ROOT%{_libdir}/jack/*.so $RPM_BUILD_ROOT%{_libdir}/libjack*.so.*.*.*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -129,37 +136,56 @@ exit 0
 %postun -p /sbin/ldconfig
 
 %files 
-%defattr(-,root,root)
-%doc AUTHORS TODO COPYING*
+%defattr(-,root,root,-)
+%doc ChangeLog README README_NETJACK2 TODO
 %doc README.Fedora
 %doc jack.pa
+%{_bindir}/alsa_in
+%{_bindir}/alsa_out
 %{_bindir}/jackd
 %{_bindir}/jack_load
 %{_bindir}/jack_unload
 %{_bindir}/jack_freewheel
+%exclude %{_bindir}/jackdbus
+%exclude %{_bindir}/jack_control
+%{_bindir}/jack_cpu
+%{_bindir}/jack_cpu_load
+%{_bindir}/jack_delay
+%{_bindir}/jack_server_control
+%{_bindir}/jack_test
+%{_bindir}/jack_thru
+%{_bindir}/jack_zombie
+%{_datadir}/dbus-1/services/org.jackaudio.service
 %{_libdir}/jack/
-%{_mandir}/man1/jack*.1*
 %{_libdir}/libjack.so.*
 %{_libdir}/libjackserver.so.*
-%{_sysconfdir}/security/limits.d/*.conf
+%config(noreplace) %{_sysconfdir}/security/limits.d/*.conf
+%{_mandir}/man1/alsa_*.1*
+%{_mandir}/man1/jack_freewheel*.1*
+%{_mandir}/man1/jack_load*.1*
+%{_mandir}/man1/jack_unload*.1*
+%{_mandir}/man1/jackd*.1*
+
 
 %files devel
-%defattr(-,root,root)
-%doc doc/reference
+%defattr(-,root,root,-)
+%doc reference/*
 %{_includedir}/jack/
 %{_libdir}/libjack.so
 %{_libdir}/libjackserver.so
 %{_libdir}/pkgconfig/jack.pc
 
 %files example-clients
-%defattr(-,root,root)
+%defattr(-,root,root,-)
 %{_bindir}/jackrec
 %{_bindir}/jack_alias
 %{_bindir}/jack_bufsize
 %{_bindir}/jack_connect
 %{_bindir}/jack_disconnect
 %{_bindir}/jack_evmon
-%{_bindir}/jack_impulse_grabber
+# These are not ready yet
+#{_bindir}/jack_impulse_grabber
+%exclude %{_mandir}/man1/jack_impulse_grabber.1*
 %{_bindir}/jack_lsp
 %{_bindir}/jack_metro
 %{_bindir}/jack_netsource
@@ -169,11 +195,28 @@ exit 0
 %{_bindir}/jack_wait
 %{_bindir}/jack_monitor_client
 %{_bindir}/jack_simple_client
-%{_bindir}/jack_transport_client
 %{_bindir}/jack_midiseq
 %{_bindir}/jack_midisine
+%{_bindir}/jack_multiple_metro
+%{_mandir}/man1/jack_bufsize.1*
+%{_mandir}/man1/jack_connect.1*
+%{_mandir}/man1/jack_disconnect.1*
+%{_mandir}/man1/jack_lsp.1*
+%{_mandir}/man1/jack_metro.1*
+%{_mandir}/man1/jack_monitor_client.1*
+%{_mandir}/man1/jack_netsource.1*
+%{_mandir}/man1/jack_samplerate.1*
+%{_mandir}/man1/jack_showtime.1*
+%{_mandir}/man1/jack_simple_client.1*
+%{_mandir}/man1/jack_transport.1*
+%{_mandir}/man1/jack_wait.1*
+%{_mandir}/man1/jackrec.1*
+
 
 %changelog
+* Mon Jul 19 2010 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.5-1
+- Jack 2!
+
 * Sat Nov 21 2009 Andy Shevchenko <andy@smile.org.ua> - 0.118.0-1
 - update to 0.118.0 (should fix #533419)
 - remove upstreamed patch
@@ -274,7 +317,7 @@ exit 0
 - remove --enable-stripped-jackd and --enable-optimize (use default flags)
 
 * Fri May 19 2006 Andy Shevchenko <andriy@asplinux.com.ua> 0.101.1-8
-- uniform directories items at %files section
+- uniform directories items at %%files section
 
 * Wed May 17 2006 Andy Shevchenko <andriy@asplinux.com.ua> 0.101.1-7
 - change License tag to GPL/LGPL
