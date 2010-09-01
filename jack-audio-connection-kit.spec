@@ -4,7 +4,7 @@
 Summary:       The Jack Audio Connection Kit
 Name:          jack-audio-connection-kit
 Version:       1.9.5
-Release:       1%{?dist}
+Release:       2%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
@@ -26,6 +26,13 @@ Patch3:        jack-manpages.patch
 Patch4:        jack-realtime-compat.patch
 # Compile against celt-0.8.0
 Patch5:        jack-celt08.patch
+# Use GCC atomic operation for other arches
+Patch6:        %{name}-1.9.5-atomic.patch
+# Treat s390x as 64-bit arch
+Patch7:        %{name}-1.9.5-64bit.patch
+# Add fallback get_cycles() solution
+Patch8:        %{name}-1.9.5-cycles.patch
+
 
 BuildRoot:     %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: alsa-lib-devel
@@ -33,8 +40,10 @@ BuildRequires: dbus-devel
 BuildRequires: celt-devel
 BuildRequires: doxygen
 BuildRequires: expat-devel
+%ifnarch s390 s390x
 BuildRequires: libffado-devel
 BuildRequires: libfreebob-devel
+%endif
 BuildRequires: libsamplerate-devel
 BuildRequires: libsndfile-devel
 BuildRequires: ncurses-devel
@@ -85,6 +94,9 @@ Small example clients that use the Jack Audio Connection Kit.
 %if 0%{?fedora} > 13
 %patch5 -p1 -b .celt08
 %endif
+%patch6 -p1 -b .atomic
+%patch7 -p1 -b .64bit
+%patch8 -p1 -b .cycles
 
 # Fix encoding issues
 for file in ChangeLog README TODO; do
@@ -214,6 +226,10 @@ exit 0
 
 
 %changelog
+* Thu Aug 26 2010 Dan Horák <dan[at]danny.cz> - 1.9.5-2
+- no Firewire on s390(x)
+- fix building on other arches than x86 and ppc
+
 * Mon Jul 19 2010 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.5-1
 - Jack 2!
 

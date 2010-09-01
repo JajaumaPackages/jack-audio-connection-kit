@@ -1,0 +1,55 @@
+diff -up jack-1.9.5/linux/cycles.h.cycles jack-1.9.5/linux/cycles.h
+--- jack-1.9.5/linux/cycles.h.cycles	2010-08-28 16:03:40.000000000 +0200
++++ jack-1.9.5/linux/cycles.h	2010-08-28 16:05:47.000000000 +0200
+@@ -39,7 +39,7 @@
+ 
+ #ifdef __linux__
+ 
+-#ifdef __x86_64__
++#if defined(__x86_64__)
+ 
+ typedef unsigned long cycles_t;
+ extern cycles_t cacheflush_time;
+@@ -51,9 +51,7 @@ static inline unsigned long get_cycles(v
+     return (((unsigned long)hi)<<32) | ((unsigned long)lo);
+ }
+ 
+-#endif
+-
+-#ifdef __PPC__
++#elif defined(__PPC__)
+ 
+ /* PowerPC */
+ 
+@@ -82,9 +80,7 @@ static inline cycles_t get_cycles(void)
+     return ret;
+ }
+ 
+-#endif
+-
+-#ifdef __i386__
++#elif defined(__i386__)
+ 
+ typedef unsigned long long cycles_t;
+ 
+@@ -101,8 +97,19 @@ static inline cycles_t get_cycles (void)
+     return ret;
+ }
+ 
+-#endif
++#else
++
++/* fallback solution */
++typedef unsigned long cycles_t;
++
++static inline cycles_t get_cycles (void)
++{
++    return 0;
++}
++
+ 
+ #endif
+ 
++#endif /* __linux__ */
++
+ #endif /* __jack_cycles_h__ */

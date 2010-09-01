@@ -1,0 +1,273 @@
+diff -up jack-1.9.5/common/JackAPI.cpp.s390x jack-1.9.5/common/JackAPI.cpp
+--- jack-1.9.5/common/JackAPI.cpp.s390x	2010-08-28 15:34:33.000000000 +0200
++++ jack-1.9.5/common/JackAPI.cpp	2010-08-28 15:35:59.000000000 +0200
+@@ -317,7 +317,7 @@ EXPORT void* jack_port_get_buffer(jack_p
+ #ifdef __CLIENTDEBUG__
+     JackGlobals::CheckContext("jack_port_get_buffer");
+ #endif
+-#if defined(__x86_64__) || defined(__ppc64__)
++#if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+     uint64_t port_aux = (uint64_t)port;
+ #else
+     uint32_t port_aux = (uint32_t)port;
+@@ -337,7 +337,7 @@ EXPORT const char* jack_port_name(const 
+ #ifdef __CLIENTDEBUG__
+     JackGlobals::CheckContext("jack_port_name");
+ #endif
+-#if defined(__x86_64__) || defined(__ppc64__)
++#if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+     uint64_t port_aux = (uint64_t)port;
+ #else
+     uint32_t port_aux = (uint32_t)port;
+@@ -357,7 +357,7 @@ EXPORT const char* jack_port_short_name(
+ #ifdef __CLIENTDEBUG__
+     JackGlobals::CheckContext("jack_port_short_name");
+ #endif
+-#if defined(__x86_64__) || defined(__ppc64__)
++#if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+     uint64_t port_aux = (uint64_t)port;
+ #else
+     uint32_t port_aux = (uint32_t)port;
+@@ -377,7 +377,7 @@ EXPORT int jack_port_flags(const jack_po
+ #ifdef __CLIENTDEBUG__
+     JackGlobals::CheckContext("jack_port_flags");
+ #endif
+-#if defined(__x86_64__) || defined(__ppc64__)
++#if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+     uint64_t port_aux = (uint64_t)port;
+ #else
+     uint32_t port_aux = (uint32_t)port;
+@@ -397,7 +397,7 @@ EXPORT const char* jack_port_type(const 
+ #ifdef __CLIENTDEBUG__
+     JackGlobals::CheckContext("jack_port_type");
+ #endif
+- #if defined(__x86_64__) || defined(__ppc64__)
++ #if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+     uint64_t port_aux = (uint64_t)port;
+ #else
+     uint32_t port_aux = (uint32_t)port;
+@@ -417,7 +417,7 @@ EXPORT jack_port_type_id_t jack_port_typ
+ #ifdef __CLIENTDEBUG__
+     JackGlobals::CheckContext("jack_port_type_id");
+ #endif
+-#if defined(__x86_64__) || defined(__ppc64__)
++#if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+     uint64_t port_aux = (uint64_t)port;
+ #else
+     uint32_t port_aux = (uint32_t)port;
+@@ -437,7 +437,7 @@ EXPORT int jack_port_connected(const jac
+ #ifdef __CLIENTDEBUG__
+     JackGlobals::CheckContext("jack_port_connected");
+ #endif
+-#if defined(__x86_64__) || defined(__ppc64__)
++#if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+     uint64_t port_aux = (uint64_t)port;
+ #else
+     uint32_t port_aux = (uint32_t)port;
+@@ -458,7 +458,7 @@ EXPORT int jack_port_connected_to(const 
+ #ifdef __CLIENTDEBUG__
+     JackGlobals::CheckContext("jack_port_connected_to");
+ #endif
+-#if defined(__x86_64__) || defined(__ppc64__)
++#if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+     uint64_t port_aux = (uint64_t)port;
+ #else
+     uint32_t port_aux = (uint32_t)port;
+@@ -488,7 +488,7 @@ EXPORT int jack_port_tie(jack_port_t* sr
+ #ifdef __CLIENTDEBUG__
+     JackGlobals::CheckContext("jack_port_tie");
+ #endif
+-#if defined(__x86_64__) || defined(__ppc64__)
++#if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+     uint64_t src_aux = (uint64_t)src;
+ #else
+     uint32_t src_aux = (uint32_t)src;
+@@ -498,7 +498,7 @@ EXPORT int jack_port_tie(jack_port_t* sr
+         jack_error("jack_port_tie called with a NULL src port");
+         return -1;
+     }
+-#if defined(__x86_64__) || defined(__ppc64__)
++#if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+     uint64_t dst_aux = (uint64_t)dst;
+ #else
+     uint32_t dst_aux = (uint32_t)dst;
+@@ -522,7 +522,7 @@ EXPORT int jack_port_untie(jack_port_t* 
+ #ifdef __CLIENTDEBUG__
+     JackGlobals::CheckContext("jack_port_untie");
+ #endif
+-#if defined(__x86_64__) || defined(__ppc64__)
++#if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+     uint64_t port_aux = (uint64_t)port;
+ #else
+     uint32_t port_aux = (uint32_t)port;
+@@ -542,7 +542,7 @@ EXPORT jack_nframes_t jack_port_get_late
+ #ifdef __CLIENTDEBUG__
+     JackGlobals::CheckContext("jack_port_get_latency");
+ #endif
+-#if defined(__x86_64__) || defined(__ppc64__)
++#if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+     uint64_t port_aux = (uint64_t)port;
+ #else
+     uint32_t port_aux = (uint32_t)port;
+@@ -563,7 +563,7 @@ EXPORT void jack_port_set_latency(jack_p
+ #ifdef __CLIENTDEBUG__
+     JackGlobals::CheckContext("jack_port_set_latency");
+ #endif
+-#if defined(__x86_64__) || defined(__ppc64__)
++#if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+     uint64_t port_aux = (uint64_t)port;
+ #else
+     uint32_t port_aux = (uint32_t)port;
+@@ -585,7 +585,7 @@ EXPORT int jack_recompute_total_latency(
+ #endif
+ 
+     JackClient* client = (JackClient*)ext_client;
+-#if defined(__x86_64__) || defined(__ppc64__)
++#if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+     uint64_t port_aux = (uint64_t)port;
+ #else
+     uint32_t port_aux = (uint32_t)port;
+@@ -630,7 +630,7 @@ EXPORT int jack_port_set_name(jack_port_
+ #ifdef __CLIENTDEBUG__
+     JackGlobals::CheckContext("jack_port_set_name");
+ #endif
+-#if defined(__x86_64__) || defined(__ppc64__)
++#if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+     uint64_t port_aux = (uint64_t)port;
+ #else
+     uint32_t port_aux = (uint32_t)port;
+@@ -660,7 +660,7 @@ EXPORT int jack_port_set_alias(jack_port
+ #ifdef __CLIENTDEBUG__
+     JackGlobals::CheckContext("jack_port_set_alias");
+ #endif
+-#if defined(__x86_64__) || defined(__ppc64__)
++#if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+     uint64_t port_aux = (uint64_t)port;
+ #else
+     uint32_t port_aux = (uint32_t)port;
+@@ -683,7 +683,7 @@ EXPORT int jack_port_unset_alias(jack_po
+ #ifdef __CLIENTDEBUG__
+     JackGlobals::CheckContext("jack_port_unset_alias");
+ #endif
+-#if defined(__x86_64__) || defined(__ppc64__)
++#if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+     uint64_t port_aux = (uint64_t)port;
+ #else
+     uint32_t port_aux = (uint32_t)port;
+@@ -706,7 +706,7 @@ EXPORT int jack_port_get_aliases(const j
+ #ifdef __CLIENTDEBUG__
+     JackGlobals::CheckContext("jack_port_get_aliases");
+ #endif
+-#if defined(__x86_64__) || defined(__ppc64__)
++#if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+     uint64_t port_aux = (uint64_t)port;
+ #else
+     uint32_t port_aux = (uint32_t)port;
+@@ -726,7 +726,7 @@ EXPORT int jack_port_request_monitor(jac
+ #ifdef __CLIENTDEBUG__
+     JackGlobals::CheckContext("jack_port_request_monitor");
+ #endif
+-#if defined(__x86_64__) || defined(__ppc64__)
++#if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+     uint64_t port_aux = (uint64_t)port;
+ #else
+     uint32_t port_aux = (uint32_t)port;
+@@ -769,7 +769,7 @@ EXPORT int jack_port_ensure_monitor(jack
+ #ifdef __CLIENTDEBUG__
+     JackGlobals::CheckContext("jack_port_ensure_monitor");
+ #endif
+- #if defined(__x86_64__) || defined(__ppc64__)
++ #if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+     uint64_t port_aux = (uint64_t)port;
+ #else
+     uint32_t port_aux = (uint32_t)port;
+@@ -789,7 +789,7 @@ EXPORT int jack_port_monitoring_input(ja
+ #ifdef __CLIENTDEBUG__
+     JackGlobals::CheckContext("jack_port_monitoring_input");
+ #endif
+-#if defined(__x86_64__) || defined(__ppc64__)
++#if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+     uint64_t port_aux = (uint64_t)port;
+ #else
+     uint32_t port_aux = (uint32_t)port;
+@@ -1128,7 +1128,7 @@ EXPORT jack_port_t* jack_port_register(j
+         jack_error("jack_port_register called with a NULL port name or a NULL port_type");
+         return NULL;
+     } else {
+-#if defined(__x86_64__) || defined(__ppc64__)
++#if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+         return (jack_port_t *)((uint64_t)client->PortRegister(port_name, port_type, flags, buffer_size));
+ #else
+         return (jack_port_t *)client->PortRegister(port_name, port_type, flags, buffer_size);
+@@ -1146,7 +1146,7 @@ EXPORT int jack_port_unregister(jack_cli
+         jack_error("jack_port_unregister called with a NULL client");
+         return -1;
+     }
+-#if defined(__x86_64__) || defined(__ppc64__)
++#if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+     uint64_t port_aux = (uint64_t)port;
+ #else
+     uint32_t port_aux = (uint32_t)port;
+@@ -1169,7 +1169,7 @@ EXPORT int jack_port_is_mine(const jack_
+         jack_error("jack_port_is_mine called with a NULL client");
+         return -1;
+     }
+-#if defined(__x86_64__) || defined(__ppc64__)
++#if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+     uint64_t port_aux = (uint64_t)port;
+ #else
+     uint32_t port_aux = (uint32_t)port;
+@@ -1187,7 +1187,7 @@ EXPORT const char** jack_port_get_connec
+ #ifdef __CLIENTDEBUG__
+     JackGlobals::CheckContext("jack_port_get_connections");
+ #endif
+-#if defined(__x86_64__) || defined(__ppc64__)
++#if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+     uint64_t port_aux = (uint64_t)port;
+ #else
+     uint32_t port_aux = (uint32_t)port;
+@@ -1215,7 +1215,7 @@ EXPORT const char** jack_port_get_all_co
+         return NULL;
+     }
+ 
+-#if defined(__x86_64__) || defined(__ppc64__)
++#if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+     uint64_t port_aux = (uint64_t)port;
+ #else
+     uint32_t port_aux = (uint32_t)port;
+@@ -1242,7 +1242,7 @@ EXPORT jack_nframes_t jack_port_get_tota
+         return 0;
+     }
+ 
+-#if defined(__x86_64__) || defined(__ppc64__)
++#if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+     uint64_t port_aux = (uint64_t)port;
+ #else
+     uint32_t port_aux = (uint32_t)port;
+@@ -1307,7 +1307,7 @@ EXPORT int jack_port_disconnect(jack_cli
+         jack_error("jack_port_disconnect called with a NULL client");
+         return -1;
+     }
+-#if defined(__x86_64__) || defined(__ppc64__)
++#if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+     uint64_t port_aux = (uint64_t)src;
+ #else
+     uint32_t port_aux = (uint32_t)src;
+@@ -1383,7 +1383,7 @@ EXPORT jack_port_t* jack_port_by_name(ja
+         if (!manager)
+             return NULL;
+         int res = manager->GetPort(portname); // returns a port index at least > 1
+-#if defined(__x86_64__) || defined(__ppc64__)
++#if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+         return (res == NO_PORT) ? NULL : (jack_port_t*)((uint64_t)res);
+ #else
+         return (res == NO_PORT) ? NULL : (jack_port_t*)res;
+@@ -1397,7 +1397,7 @@ EXPORT jack_port_t* jack_port_by_id(jack
+     JackGlobals::CheckContext("jack_port_by_id");
+ #endif
+     /* jack_port_t* type is actually the port index */
+-#if defined(__x86_64__) || defined(__ppc64__)
++#if defined(__x86_64__) || defined(__ppc64__) || defined (__s390x__)
+     return (jack_port_t*)((uint64_t)id);
+ #else
+     return (jack_port_t*)id;
