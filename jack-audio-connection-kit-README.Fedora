@@ -1,3 +1,20 @@
+	USING ALSA DIRECTLY
+
+Switch to root account.
+
+Install the required packages:
+    yum install alsa-plugins-jack
+
+Add yourself to the jackuser group.
+    usermod -a -G jackuser "<your username>"
+
+Start the jack daemon (your parameters may be different):
+    jackd -R -P4 -dalsa -r44100 -p512 -n4 -D -Chw:0 -Phw:0
+or use
+    qjackctl -s
+if you have it installed and configured.
+
+
 	INTEGRATE JACK WITH PULSEAUDIO
 
 The original text is placed at:
@@ -6,7 +23,7 @@ The original text is placed at:
 Switch to root account.
 
 Install the required packages:
-    yum install pulseaudio-module-jack alsa-plugins-jack jack-audio-connection-kit 
+    yum install pulseaudio-module-jack alsa-plugins-jack
 
 Add yourself to the pulse-rt and jackuser groups.
     usermod -a -G pulse-rt,jackuser "<your username>"
@@ -38,17 +55,10 @@ Start the pulseaudio daemon:
 Now everything should work.
 
 
-	USING ALSA DIRECTLY
-
-Due to big amount of text lines and a few necessary graphics here is only link
-to very useful article about jack-audio-connection-kit and ALSA. So, go by
-following link:
-    http://www.legg.uklinux.net/rosegarden_sound_howto_fc7.html
-
-
 	RUNNING JACK SERVER IN REALTIME MODE
 
-NOTE: this chapter describes steps for older Fedora vesions.
+NOTE: This chapter explains why you have done the above changes in more detail.
+It is kept for informational purposes.
 
 The JACK server jackd has the capability to run in a real-time mode
 which greatly decreases the chance of audio glitches. The real-time mode
@@ -65,6 +75,13 @@ is important to understand that modifying the resource limits
 configuration files can decrease the security of your system.
 Documentation specific to the resource limits PAM module can be found at
 http://www.kernel.org/pub/linux/libs/pam/Linux-PAM-html/pam-6.html#ss6.12
+
+Alternatively, one can create a new file 
+   /etc/security/limits.d/<priority>-<name>.conf
+that contains the resource limits for individual users and/or groups. The
+jack-audio-connection-kit package that comes with Fedora contains the file
+   /etc/security/limits.d/99-jack.conf
+that does this job for you.
 
 The resource limits that need to be changed to allow jackd to run in
 realtime mode are named rtprio and memlock. To increase the limits for a
@@ -108,6 +125,6 @@ virtual memory          (kbytes, -v) unlimited
 file locks                      (-x) unlimited
 file locks                      (-x) unlimited
 
-Keep in mind that you may have to re-login before changes to limits.conf
-take effect.
+Keep in mind that you may have to re-login before changes to limits.conf,
+or additions to the limits.d/ directory to take effect.
 

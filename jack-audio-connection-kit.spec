@@ -3,8 +3,8 @@
 
 Summary:       The Jack Audio Connection Kit
 Name:          jack-audio-connection-kit
-Version:       1.9.5
-Release:       2%{?dist}
+Version:       1.9.6
+Release:       1%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
@@ -18,21 +18,9 @@ Patch0:        jack-audio-connection-kit-no_date_footer.patch
 # Enables renaming of the jack ports based on a configuration file
 # Under discussion upstream. We need it for CCRMA compatibility
 Patch1:        jack-infrastructure.patch
-# Fix DSO linking
-Patch2:        jack-DSO-linking.patch
-# Manpages. From ustream trunk
-Patch3:        jack-manpages.patch
-# Make jack compatible with both the Fedora kernel and the realtime kernel
 Patch4:        jack-realtime-compat.patch
 # Compile against celt-0.8.0
 Patch5:        jack-celt08.patch
-# Use GCC atomic operation for other arches
-Patch6:        %{name}-1.9.5-atomic.patch
-# Treat s390x as 64-bit arch
-Patch7:        %{name}-1.9.5-64bit.patch
-# Add fallback get_cycles() solution
-Patch8:        %{name}-1.9.5-cycles.patch
-
 
 BuildRoot:     %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: alsa-lib-devel
@@ -88,15 +76,10 @@ Small example clients that use the Jack Audio Connection Kit.
 %setup -q -n jack-%{version}
 %patch0 -p1 -b .nodate
 %patch1 -p1 -b .infra
-%patch2 -p1 -b .linking
-%patch3 -p1
 %patch4 -p1
 %if 0%{?fedora} > 13
 %patch5 -p1 -b .celt08
 %endif
-%patch6 -p1 -b .atomic
-%patch7 -p1 -b .64bit
-%patch8 -p1 -b .cycles
 
 # Fix encoding issues
 for file in ChangeLog README TODO; do
@@ -108,7 +91,19 @@ done
 
 %build
 export CPPFLAGS="$RPM_OPT_FLAGS"
-./waf configure --prefix=%{_prefix} --libdir=/%{_lib} --doxygen --dbus --classic
+export PREFIX=%{_prefix}
+./waf configure \
+   --mandir=/share/man/man1 \
+   --libdir=/%{_lib} \
+   --doxygen \
+   --dbus \
+   --classic \
+%ifnarch s390 s390x
+   --firewire \
+   --freebob \
+%endif
+   --alsa
+
 ./waf build %{?_smp_mflags} -v
 
 %install
@@ -226,6 +221,10 @@ exit 0
 
 
 %changelog
+* Sat Nov 06 2010 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.6-1
+- update to 1.9.6
+- update README.Fedora file with more recent information
+
 * Thu Aug 26 2010 Dan Horák <dan[at]danny.cz> - 1.9.5-2
 - no Firewire on s390(x)
 - fix building on other arches than x86 and ppc
