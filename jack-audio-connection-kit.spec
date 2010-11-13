@@ -4,7 +4,7 @@
 Summary:       The Jack Audio Connection Kit
 Name:          jack-audio-connection-kit
 Version:       1.9.6
-Release:       1%{?dist}
+Release:       2%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
@@ -221,6 +221,9 @@ exit 0
 
 
 %changelog
+* Fri Nov 12 2010 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.6-2
+- Fix the realtime compat patch so it can detect the realtime kernel better
+
 * Sat Nov 06 2010 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.6-1
 - update to 1.9.6
 - update README.Fedora file with more recent information
