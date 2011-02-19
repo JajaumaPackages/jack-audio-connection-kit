@@ -4,7 +4,7 @@
 Summary:       The Jack Audio Connection Kit
 Name:          jack-audio-connection-kit
 Version:       1.9.6
-Release:       5%{?dist}
+Release:       6%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
@@ -21,6 +21,8 @@ Patch1:        jack-infrastructure.patch
 Patch4:        jack-realtime-compat.patch
 # Compile against celt-0.8.0
 Patch5:        jack-celt08.patch
+# compile with CELT 0.11 API
+Patch6:        jack-1.9.6-celt011.patch
 
 BuildRoot:     %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: alsa-lib-devel
@@ -79,6 +81,9 @@ Small example clients that use the Jack Audio Connection Kit.
 %patch4 -p1
 %if 0%{?fedora} > 13
 %patch5 -p1 -b .celt08
+%endif
+%if 0%{?fedora} > 14
+%patch6 -p1 -b .celt11
 %endif
 
 # Fix encoding issues
@@ -221,6 +226,9 @@ exit 0
 
 
 %changelog
+* Sat Feb 19 2011 Michael Schwendt <mschwendt@fedoraproject.org> - 1.9.6-6
+- Rawhide: Patch for CELT 0.11 API change because of current broken deps.
+
 * Wed Feb 16 2011 Peter Robinson <pbrobinson@gmail.com> - 1.9.6-5
 - Try again once repo has refreshed
 
