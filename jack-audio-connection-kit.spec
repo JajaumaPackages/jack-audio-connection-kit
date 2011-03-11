@@ -23,6 +23,8 @@ Patch4:        jack-realtime-compat.patch
 Patch5:        jack-celt08.patch
 # compile with CELT 0.11 API
 Patch6:        jack-1.9.6-celt011.patch
+# uc_regs no longer available on ppc64
+Patch7:        jack-audio-connection-kit-ppc-uc_regs.patch 
 
 BuildRoot:     %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: alsa-lib-devel
@@ -85,6 +87,7 @@ Small example clients that use the Jack Audio Connection Kit.
 %if 0%{?fedora} > 14
 %patch6 -p1 -b .celt11
 %endif
+%patch7 -p1 -b .uc_regs
 
 # Fix encoding issues
 for file in ChangeLog README TODO; do
@@ -226,6 +229,9 @@ exit 0
 
 
 %changelog
+* Fri Mar 11 2011 Karsten Hopp <karsten@redhat.com> 1.9.6-6
+- powerpc64 doesn't have uc_regs anymore
+
 * Sat Feb 19 2011 Michael Schwendt <mschwendt@fedoraproject.org> - 1.9.6-6
 - Rawhide: Patch for CELT 0.11 API change because of current broken deps.
 
