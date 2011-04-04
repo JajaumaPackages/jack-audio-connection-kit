@@ -3,8 +3,8 @@
 
 Summary:       The Jack Audio Connection Kit
 Name:          jack-audio-connection-kit
-Version:       1.9.6
-Release:       6%{?dist}
+Version:       1.9.7
+Release:       1%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
@@ -15,14 +15,11 @@ Source2:       %{name}-script.pa
 Source3:       %{name}-limits.conf
 # No-date-footer hack to remove dates from doxygen documentation
 Patch0:        jack-audio-connection-kit-no_date_footer.patch
-# Enables renaming of the jack ports based on a configuration file
-# Under discussion upstream. We need it for CCRMA compatibility
-Patch1:        jack-infrastructure.patch
+# Build fix
+Patch1:        jack-doxygen-output-dir-fix.patch
+# Compilation fix
+Patch3:        jack-freebob-buildfix.patch
 Patch4:        jack-realtime-compat.patch
-# Compile against celt-0.8.0
-Patch5:        jack-celt08.patch
-# compile with CELT 0.11 API
-Patch6:        jack-1.9.6-celt011.patch
 # uc_regs no longer available on ppc64
 Patch7:        jack-audio-connection-kit-ppc-uc_regs.patch 
 
@@ -47,17 +44,16 @@ Requires(pre): shadow-utils
 Requires:      pam
 
 %description
-JACK is a low-latency audio server, written primarily for the Linux
-operating system. It can connect a number of different applications to
-an audio device, as well as allowing them to share audio between
-themselves. Its clients can run in their own processes (i.e. as a
-normal application), or can they can run within a JACK server (i.e. a
-"plugin").
+JACK is a low-latency audio server, written primarily for the Linux operating
+system. It can connect a number of different applications to an audio device, as
+well as allowing them to share audio between themselves. Its clients can run in
+their own processes (i.e. as a normal application), or can they can run within a
+JACK server (i.e. a "plugin").
 
-JACK is different from other audio server efforts in that it has been
-designed from the ground up to be suitable for professional audio
-work. This means that it focuses on two key areas: synchronous
-execution of all clients, and low latency operation.
+JACK is different from other audio server efforts in that it has been designed
+from the ground up to be suitable for professional audio work. This means that
+it focuses on two key areas: synchronous execution of all clients, and low
+latency operation.
 
 %package devel
 Summary:       Header files for Jack
@@ -79,14 +75,9 @@ Small example clients that use the Jack Audio Connection Kit.
 %prep
 %setup -q -n jack-%{version}
 %patch0 -p1 -b .nodate
-%patch1 -p1 -b .infra
+%patch1 -p1 -b .outdir
+%patch3 -p1 -b .compilationfix
 %patch4 -p1
-%if 0%{?fedora} > 13
-%patch5 -p1 -b .celt08
-%endif
-%if 0%{?fedora} > 14
-%patch6 -p1 -b .celt11
-%endif
 %patch7 -p1 -b .uc_regs
 
 # Fix encoding issues
@@ -111,6 +102,7 @@ export PREFIX=%{_prefix}
    --freebob \
 %endif
    --alsa
+
 
 ./waf build %{?_smp_mflags} -v
 
@@ -165,8 +157,10 @@ exit 0
 %exclude %{_bindir}/jack_control
 %{_bindir}/jack_cpu
 %{_bindir}/jack_cpu_load
-%{_bindir}/jack_delay
+%{_bindir}/jack_iodelay
+%{_bindir}/jack_midi_dump
 %{_bindir}/jack_server_control
+%{_bindir}/jack_session_notify
 %{_bindir}/jack_test
 %{_bindir}/jack_thru
 %{_bindir}/jack_zombie
@@ -177,6 +171,7 @@ exit 0
 %config(noreplace) %{_sysconfdir}/security/limits.d/*.conf
 %{_mandir}/man1/alsa_*.1*
 %{_mandir}/man1/jack_freewheel*.1*
+%{_mandir}/man1/jack_iodelay.1*
 %{_mandir}/man1/jack_load*.1*
 %{_mandir}/man1/jack_unload*.1*
 %{_mandir}/man1/jackd*.1*
@@ -208,8 +203,10 @@ exit 0
 %{_bindir}/jack_showtime
 %{_bindir}/jack_transport
 %{_bindir}/jack_wait
+%{_bindir}/jack_latent_client
 %{_bindir}/jack_monitor_client
 %{_bindir}/jack_simple_client
+%{_bindir}/jack_simple_session_client
 %{_bindir}/jack_midiseq
 %{_bindir}/jack_midisine
 %{_bindir}/jack_multiple_metro
@@ -229,6 +226,9 @@ exit 0
 
 
 %changelog
+* Sun Apr 03 2011 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.7-1
+- update to 1.9.7
+
 * Fri Mar 11 2011 Karsten Hopp <karsten@redhat.com> 1.9.6-6
 - powerpc64 doesn't have uc_regs anymore
 

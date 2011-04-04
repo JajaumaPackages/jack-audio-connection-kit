@@ -7,6 +7,7 @@ Install the required packages:
 
 Add yourself to the jackuser group.
     usermod -a -G jackuser "<your username>"
+Now you will need to log out and log back in, or simply restart the system.
 
 Start the jack daemon (your parameters may be different):
     jackd -R -P4 -dalsa -r44100 -p512 -n4 -D -Chw:0 -Phw:0
@@ -16,6 +17,7 @@ if you have it installed and configured.
 
 
 	INTEGRATE JACK WITH PULSEAUDIO
+*** Note that this section is outdated ***
 
 The original text is placed at:
     http://www.harald-hoyer.de/linux/pulseaudio-and-jackd
