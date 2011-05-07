@@ -9,58 +9,55 @@ Add yourself to the jackuser group.
     usermod -a -G jackuser "<your username>"
 Now you will need to log out and log back in, or simply restart the system.
 
-Start the jack daemon (your parameters may be different):
-    jackd -R -P4 -dalsa -r44100 -p512 -n4 -D -Chw:0 -Phw:0
-or use
+Start the jack daemon (the best parameters for your sound card may be different):
+    jackd -R -d alsa -d hw:0
+This will start jack on the first sound card, at 48KHz sampling rate (can be 
+changed with the "-r" command line parameter), with a period of 1024 frames 
+(change with "-p", determines the latency) and with 2 interrupts per period 
+(change with -n). USB sound cards can benefit from running with "-n 3" or
+"-n 4". All of these optional parameters should be specified after "-d alsa".
+
+It is best to replace the card number with the card name as the numbering can
+change from boot to boot if there is more than one sound card. The name of a
+particular card can be found in the output of "cat /proc/asound/cards", for each
+card it is the string between square brackets without the trailing blanks.
+
+Note: Jack is a sound server and not a daemon - while it does work "in the 
+background" it is not something similar to unix daemons which are started at
+boot time.
+
+
+	QJACKCTL
+
+This application can be used to control the jack sound server with a graphical
+interface. It can be started via
     qjackctl -s
-if you have it installed and configured.
+"-s" parameter makes the jack sound server start immediately.
+
+When starting jack through qjackctl it is important to note that you should (at
+least) change the "Interface" field in the "Setup" dialog to _not_ be "(default)"
+which would point Jack to use Pulse Audio. The proper "Interface" is the direct
+hw ALSA device (hw:0 for the first card, etc). Even best to use the name of the
+card as stated above.
 
 
 	INTEGRATE JACK WITH PULSEAUDIO
-*** Note that this section is outdated ***
 
-The original text is placed at:
-    http://www.harald-hoyer.de/linux/pulseaudio-and-jackd
-
-Switch to root account.
-
-Install the required packages:
-    yum install pulseaudio-module-jack alsa-plugins-jack
-
-Add yourself to the pulse-rt and jackuser groups.
-    usermod -a -G pulse-rt,jackuser "<your username>"
-
-Switch to your normal user account.
-
-Create ~/bin subdirectory if absent:
-    mkdir -p ~/bin
-
-Copy the pulseaudio start file:
-    cp /usr/share/doc/jack-audio-connection-kit-*/jack.pa ~/bin/jack.pa
-    chmod 755 ~/bin/jack.pa
-
-Close all your sessions and relogin to get the new group permissions and
-limits.
-
-Kill the current pulseaudio daemon:
-    pulseaudio -k
-
-Start the jack daemon (your parameters may be different):
-    jackd -R -P4 -dalsa -r44100 -p512 -n4 -D -Chw:0 -Phw:0
-or use
-    qjackctl -s
-if you have it installed and configured.
-
-Start the pulseaudio daemon:
-    ~/bin/jack.pa
-
-Now everything should work.
+Jack will ask Pulse Audio through dbus for ownership of the sound card. Pulse
+Audio will grant it and Jack will have complete control of it. No conflicts and
+no configuration necessary. In this case Pulse Audio will stop using the card
+and if it is the only one, you will not have sound for system sounds, browser
+media playback, etc (which is usually what you want). Otherwise it is possible
+to load a Pulse Audio module that redirects PA to use Jack.
 
 
 	RUNNING JACK SERVER IN REALTIME MODE
 
 NOTE: This chapter explains why you have done the above changes in more detail.
-It is kept for informational purposes.
+It is kept for informational purposes. The changes suggested below is done
+automatically by your Jack installation and no manual modification of the
+pam configuration should be necessary.
+
 
 The JACK server jackd has the capability to run in a real-time mode
 which greatly decreases the chance of audio glitches. The real-time mode
