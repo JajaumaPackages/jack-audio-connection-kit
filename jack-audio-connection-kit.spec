@@ -29,7 +29,7 @@ BuildRequires: dbus-devel
 BuildRequires: celt-devel
 BuildRequires: doxygen
 BuildRequires: expat-devel
-%ifnarch s390 s390x
+%ifnarch s390 s390x %{arm}
 BuildRequires: libffado-devel
 BuildRequires: libfreebob-devel
 %endif
@@ -97,7 +97,7 @@ export PREFIX=%{_prefix}
    --doxygen \
    --dbus \
    --classic \
-%ifnarch s390 s390x
+%ifnarch s390 s390x %{arm}
    --firewire \
    --freebob \
 %endif
@@ -226,6 +226,9 @@ exit 0
 
 
 %changelog
+* Mon Aug 15 2011 Peter Robinson <pbrobinson@fedoraproject.org> - 1.9.7-3
+- Add ARM to firewire audio excludes
+
 * Fri May 06 2011 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.7-2
 - Update the README.Fedora file with most recent configuration information.
 
@@ -238,10 +241,10 @@ exit 0
 * Sat Feb 19 2011 Michael Schwendt <mschwendt@fedoraproject.org> - 1.9.6-6
 - Rawhide: Patch for CELT 0.11 API change because of current broken deps.
 
-* Wed Feb 16 2011 Peter Robinson <pbrobinson@gmail.com> - 1.9.6-5
+* Wed Feb 16 2011 Peter Robinson <pbrobinson@fedoraproject.org> - 1.9.6-5
 - Try again once repo has refreshed
 
-* Wed Feb 16 2011 Peter Robinson <pbrobinson@gmail.com> - 1.9.6-4
+* Wed Feb 16 2011 Peter Robinson <pbrobinson@fedoraproject.org> - 1.9.6-4
 - Rebuilt for new celt
 
 * Wed Feb 09 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.9.6-3
