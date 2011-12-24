@@ -3,13 +3,13 @@
 
 Summary:       The Jack Audio Connection Kit
 Name:          jack-audio-connection-kit
-Version:       1.9.7
-Release:       2%{?dist}
+Version:       1.9.8
+Release:       1%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
 URL:           http://www.jackaudio.org
-Source0:       http://www.grame.fr/~letz/jack-%{version}.tar.bz2
+Source0:       http://www.grame.fr/~letz/jack-%{version}.tgz
 Source1:       %{name}-README.Fedora
 Source2:       %{name}-script.pa
 Source3:       %{name}-limits.conf
@@ -17,8 +17,8 @@ Source3:       %{name}-limits.conf
 Patch0:        jack-audio-connection-kit-no_date_footer.patch
 # Build fix
 Patch1:        jack-doxygen-output-dir-fix.patch
-# Compilation fix
-Patch3:        jack-freebob-buildfix.patch
+# We don't want the internal API documentation
+Patch2:        jack-apidoc-only.patch
 Patch4:        jack-realtime-compat.patch
 # uc_regs no longer available on ppc64
 Patch7:        jack-audio-connection-kit-ppc-uc_regs.patch 
@@ -74,9 +74,11 @@ Small example clients that use the Jack Audio Connection Kit.
 
 %prep
 %setup -q -n jack-%{version}
+
+pushd jack-%{version}
 %patch0 -p1 -b .nodate
 %patch1 -p1 -b .outdir
-%patch3 -p1 -b .compilationfix
+%patch2 -p1 -b .nointernalapi
 %patch4 -p1
 %patch7 -p1 -b .uc_regs
 
@@ -87,8 +89,11 @@ for file in ChangeLog README TODO; do
    touch -r $file $file.tmp2
    mv -f $file.tmp2 $file
 done
+popd
+
 
 %build
+pushd jack-%{version}
 export CPPFLAGS="$RPM_OPT_FLAGS"
 export PREFIX=%{_prefix}
 ./waf configure \
@@ -105,9 +110,10 @@ export PREFIX=%{_prefix}
 
 
 ./waf build %{?_smp_mflags} -v
+popd
 
 %install
-rm -rf $RPM_BUILD_ROOT
+pushd jack-%{version}
 ./waf --destdir=$RPM_BUILD_ROOT install
 
 # move doxygen documentation to the right place
@@ -130,9 +136,7 @@ mv $RPM_BUILD_ROOT%{_bindir}/jack_rec $RPM_BUILD_ROOT%{_bindir}/jackrec
 
 # Fix permissions of the modules
 chmod 755 $RPM_BUILD_ROOT%{_libdir}/jack/*.so $RPM_BUILD_ROOT%{_libdir}/libjack*.so.*.*.*
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+popd
 
 %pre
 getent group %groupname > /dev/null || groupadd -r %groupname
@@ -143,76 +147,76 @@ exit 0
 %postun -p /sbin/ldconfig
 
 %files 
-%defattr(-,root,root,-)
-%doc ChangeLog README README_NETJACK2 TODO
-%doc README.Fedora
-%doc jack.pa
-%{_bindir}/alsa_in
-%{_bindir}/alsa_out
+%doc jack-%{version}/ChangeLog jack-%{version}/README jack-%{version}/README_NETJACK2 jack-%{version}/TODO
+%doc jack-%{version}/README.Fedora
+%doc jack-%{version}/jack.pa
 %{_bindir}/jackd
-%{_bindir}/jack_load
-%{_bindir}/jack_unload
-%{_bindir}/jack_freewheel
+%{_bindir}/jackrec
 %exclude %{_bindir}/jackdbus
-%exclude %{_bindir}/jack_control
-%{_bindir}/jack_cpu
-%{_bindir}/jack_cpu_load
-%{_bindir}/jack_iodelay
-%{_bindir}/jack_midi_dump
-%{_bindir}/jack_server_control
-%{_bindir}/jack_session_notify
-%{_bindir}/jack_test
-%{_bindir}/jack_thru
-%{_bindir}/jack_zombie
 %{_datadir}/dbus-1/services/org.jackaudio.service
 %{_libdir}/jack/
 %{_libdir}/libjack.so.*
+%{_libdir}/libjacknet.so.*
 %{_libdir}/libjackserver.so.*
 %config(noreplace) %{_sysconfdir}/security/limits.d/*.conf
-%{_mandir}/man1/alsa_*.1*
-%{_mandir}/man1/jack_freewheel*.1*
-%{_mandir}/man1/jack_iodelay.1*
-%{_mandir}/man1/jack_load*.1*
-%{_mandir}/man1/jack_unload*.1*
+
+%{_mandir}/man1/jackrec.1*
 %{_mandir}/man1/jackd*.1*
 
 
 %files devel
-%defattr(-,root,root,-)
-%doc reference/*
+%doc jack-%{version}/reference/*
 %{_includedir}/jack/
 %{_libdir}/libjack.so
+%{_libdir}/libjacknet.so
 %{_libdir}/libjackserver.so
 %{_libdir}/pkgconfig/jack.pc
 
 %files example-clients
-%defattr(-,root,root,-)
-%{_bindir}/jackrec
+%{_bindir}/alsa_in
+%{_bindir}/alsa_out
 %{_bindir}/jack_alias
 %{_bindir}/jack_bufsize
 %{_bindir}/jack_connect
+%exclude %{_bindir}/jack_control
 %{_bindir}/jack_disconnect
+%{_bindir}/jack_cpu_load
 %{_bindir}/jack_evmon
+%{_bindir}/jack_freewheel
 # These are not ready yet
 #{_bindir}/jack_impulse_grabber
 %exclude %{_mandir}/man1/jack_impulse_grabber.1*
+%{_bindir}/jack_latent_client
+%{_bindir}/jack_load
+%{_bindir}/jack_unload
 %{_bindir}/jack_lsp
 %{_bindir}/jack_metro
-%{_bindir}/jack_netsource
-%{_bindir}/jack_samplerate
-%{_bindir}/jack_showtime
-%{_bindir}/jack_transport
-%{_bindir}/jack_wait
-%{_bindir}/jack_latent_client
-%{_bindir}/jack_monitor_client
-%{_bindir}/jack_simple_client
-%{_bindir}/jack_simple_session_client
+%{_bindir}/jack_midi_dump
+%{_bindir}/jack_midi_latency_test
 %{_bindir}/jack_midiseq
 %{_bindir}/jack_midisine
-%{_bindir}/jack_multiple_metro
+%{_bindir}/jack_monitor_client
+%{_bindir}/jack_net_master
+%{_bindir}/jack_net_slave
+%{_bindir}/jack_netsource
+%{_bindir}/jack_samplerate
+%{_bindir}/jack_server_control
+%{_bindir}/jack_session_notify
+%{_bindir}/jack_showtime
+%{_bindir}/jack_simple_client
+%{_bindir}/jack_simple_session_client
+%{_bindir}/jack_thru
+%{_bindir}/jack_transport
+%{_bindir}/jack_wait
+%{_bindir}/jack_zombie
+
+%{_mandir}/man1/alsa_*.1*
 %{_mandir}/man1/jack_bufsize.1*
 %{_mandir}/man1/jack_connect.1*
 %{_mandir}/man1/jack_disconnect.1*
+%{_mandir}/man1/jack_freewheel*.1*
+%{_mandir}/man1/jack_load*.1*
+%{_mandir}/man1/jack_unload*.1*
 %{_mandir}/man1/jack_lsp.1*
 %{_mandir}/man1/jack_metro.1*
 %{_mandir}/man1/jack_monitor_client.1*
@@ -222,10 +226,20 @@ exit 0
 %{_mandir}/man1/jack_simple_client.1*
 %{_mandir}/man1/jack_transport.1*
 %{_mandir}/man1/jack_wait.1*
-%{_mandir}/man1/jackrec.1*
+
+# tests
+%{_bindir}/jack_cpu
+%{_bindir}/jack_iodelay
+%{_bindir}/jack_multiple_metro
+%{_bindir}/jack_test
+
+%{_mandir}/man1/jack_iodelay.1*
 
 
 %changelog
+* Sat Dec 24 2011 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.8-1
+- update to 1.9.8
+
 * Mon Aug 15 2011 Peter Robinson <pbrobinson@fedoraproject.org> - 1.9.7-3
 - Add ARM to firewire audio excludes
 
