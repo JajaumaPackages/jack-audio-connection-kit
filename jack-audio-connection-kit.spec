@@ -4,7 +4,7 @@
 Summary:       The Jack Audio Connection Kit
 Name:          jack-audio-connection-kit
 Version:       1.9.8
-Release:       1%{?dist}
+Release:       2%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
@@ -96,7 +96,9 @@ popd
 pushd jack-%{version}
 export CPPFLAGS="$RPM_OPT_FLAGS"
 export PREFIX=%{_prefix}
+# Parallel build disabled as it fails sometimes
 ./waf configure \
+   -j1 \
    --mandir=/share/man/man1 \
    --libdir=/%{_lib} \
    --doxygen \
@@ -151,8 +153,8 @@ exit 0
 %doc jack-%{version}/README.Fedora
 %doc jack-%{version}/jack.pa
 %{_bindir}/jackd
+%{_bindir}/jackdbus
 %{_bindir}/jackrec
-%exclude %{_bindir}/jackdbus
 %{_datadir}/dbus-1/services/org.jackaudio.service
 %{_libdir}/jack/
 %{_libdir}/libjack.so.*
@@ -178,7 +180,7 @@ exit 0
 %{_bindir}/jack_alias
 %{_bindir}/jack_bufsize
 %{_bindir}/jack_connect
-%exclude %{_bindir}/jack_control
+%{_bindir}/jack_control
 %{_bindir}/jack_disconnect
 %{_bindir}/jack_cpu_load
 %{_bindir}/jack_evmon
@@ -237,6 +239,10 @@ exit 0
 
 
 %changelog
+* Sun Dec 25 2011 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.8-2
+- Disable parallel build (on configure stage) as it stalls half of the time
+- Don't exclude jack_control and jackdbus RHBZ#714748
+
 * Sat Dec 24 2011 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.8-1
 - update to 1.9.8
 
