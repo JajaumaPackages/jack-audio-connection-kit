@@ -4,7 +4,7 @@
 Summary:       The Jack Audio Connection Kit
 Name:          jack-audio-connection-kit
 Version:       1.9.8
-Release:       2%{?dist}
+Release:       3%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
@@ -54,6 +54,15 @@ JACK is different from other audio server efforts in that it has been designed
 from the ground up to be suitable for professional audio work. This means that
 it focuses on two key areas: synchronous execution of all clients, and low
 latency operation.
+
+%package dbus
+Summary:       Jack D-Bus launcher
+Group:         Applications/Multimedia
+Requires:      %{name} = %{version}-%{release}
+
+%description dbus
+Launcher to start Jack through D-Bus.
+
 
 %package devel
 Summary:       Header files for Jack
@@ -153,7 +162,6 @@ exit 0
 %doc jack-%{version}/README.Fedora
 %doc jack-%{version}/jack.pa
 %{_bindir}/jackd
-%{_bindir}/jackdbus
 %{_bindir}/jackrec
 %{_datadir}/dbus-1/services/org.jackaudio.service
 %{_libdir}/jack/
@@ -165,6 +173,8 @@ exit 0
 %{_mandir}/man1/jackrec.1*
 %{_mandir}/man1/jackd*.1*
 
+%files dbus
+%{_bindir}/jackdbus
 
 %files devel
 %doc jack-%{version}/reference/*
@@ -239,6 +249,9 @@ exit 0
 
 
 %changelog
+* Sat Jan 07 2012 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.8-3
+- Separate package for jackdbus RHBZ#714748
+
 * Sun Dec 25 2011 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.8-2
 - Disable parallel build (on configure stage) as it stalls half of the time
 - Don't exclude jack_control and jackdbus RHBZ#714748
