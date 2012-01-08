@@ -163,7 +163,6 @@ exit 0
 %doc jack-%{version}/jack.pa
 %{_bindir}/jackd
 %{_bindir}/jackrec
-%{_datadir}/dbus-1/services/org.jackaudio.service
 %{_libdir}/jack/
 %{_libdir}/libjack.so.*
 %{_libdir}/libjacknet.so.*
@@ -175,6 +174,7 @@ exit 0
 
 %files dbus
 %{_bindir}/jackdbus
+%{_datadir}/dbus-1/services/org.jackaudio.service
 
 %files devel
 %doc jack-%{version}/reference/*
