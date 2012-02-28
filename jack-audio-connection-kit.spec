@@ -4,7 +4,7 @@
 Summary:       The Jack Audio Connection Kit
 Name:          jack-audio-connection-kit
 Version:       1.9.8
-Release:       3%{?dist}
+Release:       4%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
@@ -249,6 +249,9 @@ exit 0
 
 
 %changelog
+* Tue Feb 28 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.9.8-4
+- Rebuilt for c++ ABI breakage
+
 * Sat Jan 07 2012 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.8-3
 - Separate package for jackdbus RHBZ#714748
 
