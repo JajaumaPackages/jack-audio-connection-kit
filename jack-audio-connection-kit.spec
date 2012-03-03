@@ -4,7 +4,7 @@
 Summary:       The Jack Audio Connection Kit
 Name:          jack-audio-connection-kit
 Version:       1.9.8
-Release:       4%{?dist}
+Release:       5%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
@@ -20,6 +20,8 @@ Patch1:        jack-doxygen-output-dir-fix.patch
 # We don't want the internal API documentation
 Patch2:        jack-apidoc-only.patch
 Patch4:        jack-realtime-compat.patch
+# Fix ppc64 mpd startup issue RHBZ#799552
+Patch6:        jack-ppc64-long.patch
 # uc_regs no longer available on ppc64
 Patch7:        jack-audio-connection-kit-ppc-uc_regs.patch 
 
@@ -89,6 +91,7 @@ pushd jack-%{version}
 %patch1 -p1 -b .outdir
 %patch2 -p1 -b .nointernalapi
 %patch4 -p1
+%patch6 -p1 -b .mpd
 %patch7 -p1 -b .uc_regs
 
 # Fix encoding issues
@@ -249,6 +252,9 @@ exit 0
 
 
 %changelog
+* Fri Mar 02 2012 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.8-5
+- Fix ppc64 mpd issue RHBZ#799552
+
 * Tue Feb 28 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.9.8-4
 - Rebuilt for c++ ABI breakage
 
