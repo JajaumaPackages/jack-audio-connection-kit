@@ -4,7 +4,7 @@
 Summary:       The Jack Audio Connection Kit
 Name:          jack-audio-connection-kit
 Version:       1.9.8
-Release:       5%{?dist}
+Release:       6%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
@@ -19,13 +19,18 @@ Patch0:        jack-audio-connection-kit-no_date_footer.patch
 Patch1:        jack-doxygen-output-dir-fix.patch
 # We don't want the internal API documentation
 Patch2:        jack-apidoc-only.patch
+# Enable ffado buffersize change at runtime. From upstream trunk
+# https://github.com/jackaudio/jack2/commit/96e025123
+Patch3:        jack-ffado-buffersize.patch
 Patch4:        jack-realtime-compat.patch
+# Fix jack-connect segfault when invoked with no arguments. From upstream trunk
+# https://github.com/jackaudio/jack2/commit/00280570a
+Patch5:        jack-fix-connect-segfault.patch
 # Fix ppc64 mpd startup issue RHBZ#799552
 Patch6:        jack-ppc64-long.patch
 # uc_regs no longer available on ppc64
 Patch7:        jack-audio-connection-kit-ppc-uc_regs.patch 
 
-BuildRoot:     %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: alsa-lib-devel
 BuildRequires: dbus-devel
 BuildRequires: celt-devel
@@ -90,7 +95,9 @@ pushd jack-%{version}
 %patch0 -p1 -b .nodate
 %patch1 -p1 -b .outdir
 %patch2 -p1 -b .nointernalapi
+%patch3 -p1 -b .ffadobuffer
 %patch4 -p1
+%patch5 -p1 -b .connectcrash
 %patch6 -p1 -b .mpd
 %patch7 -p1 -b .uc_regs
 
@@ -120,7 +127,9 @@ export PREFIX=%{_prefix}
    --firewire \
    --freebob \
 %endif
-   --alsa
+   --alsa \
+   --clients 256 \
+   --ports-per-application=2048
 
 
 ./waf build %{?_smp_mflags} -v
@@ -137,7 +146,7 @@ rm -rf $RPM_BUILD_ROOT%{_datadir}/jack-audio-connection-kit
 # install our limits to the /etc/security/limits.d
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/security/limits.d
 sed -e 's,@groupname@,%groupname,g; s,@pagroup@,%pagroup,g;' \
-    %{SOURCE3} > $RPM_BUILD_ROOT%{_sysconfdir}/security/limits.d/99-jack.conf
+    %{SOURCE3} > $RPM_BUILD_ROOT%{_sysconfdir}/security/limits.d/95-jack.conf
 
 # prepare README.Fedora for documentation including
 install -p -m644 %{SOURCE1} README.Fedora
@@ -252,6 +261,12 @@ exit 0
 
 
 %changelog
+* Sun Mar 25 2012 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.8-6
+- Rename limits file from 99-jack.conf to 95-jack.conf RHBZ#795094
+- Increase maximum number of ports and clients RHBZ#803871
+- Backport ffado runtime buffersize change feature from upstream trunk
+- Backport jack-connect executable segfault fix from upstream trunk
+
 * Fri Mar 02 2012 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.8-5
 - Fix ppc64 mpd issue RHBZ#799552
 
