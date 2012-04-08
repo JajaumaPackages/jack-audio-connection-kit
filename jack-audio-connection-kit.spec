@@ -4,7 +4,7 @@
 Summary:       The Jack Audio Connection Kit
 Name:          jack-audio-connection-kit
 Version:       1.9.8
-Release:       7%{?dist}
+Release:       8%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
@@ -262,6 +262,9 @@ exit 0
 
 
 %changelog
+* Sut Apr 08 2012 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.8-8
+- Oops. Last build was against the wrong ffado on F-17. Rebuilding against override.
+
 * Sat Apr 07 2012 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.8-7
 - Compile via -DJACK_32_64 RHBZ#803865
 - Adjust rtprio limit to 70. Adjust jack default priority to 60. RHBZ#795094
