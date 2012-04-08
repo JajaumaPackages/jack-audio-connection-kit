@@ -4,7 +4,7 @@
 Summary:       The Jack Audio Connection Kit
 Name:          jack-audio-connection-kit
 Version:       1.9.8
-Release:       6%{?dist}
+Release:       7%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
@@ -22,6 +22,7 @@ Patch2:        jack-apidoc-only.patch
 # Enable ffado buffersize change at runtime. From upstream trunk
 # https://github.com/jackaudio/jack2/commit/96e025123
 Patch3:        jack-ffado-buffersize.patch
+# Adjust default priority. RHBZ#795094
 Patch4:        jack-realtime-compat.patch
 # Fix jack-connect segfault when invoked with no arguments. From upstream trunk
 # https://github.com/jackaudio/jack2/commit/00280570a
@@ -96,7 +97,7 @@ pushd jack-%{version}
 %patch1 -p1 -b .outdir
 %patch2 -p1 -b .nointernalapi
 %patch3 -p1 -b .ffadobuffer
-%patch4 -p1
+%patch4 -p1 -b .priority
 %patch5 -p1 -b .connectcrash
 %patch6 -p1 -b .mpd
 %patch7 -p1 -b .uc_regs
@@ -113,7 +114,7 @@ popd
 
 %build
 pushd jack-%{version}
-export CPPFLAGS="$RPM_OPT_FLAGS"
+export CPPFLAGS="$RPM_OPT_FLAGS -DJACK_32_64"
 export PREFIX=%{_prefix}
 # Parallel build disabled as it fails sometimes
 ./waf configure \
@@ -261,6 +262,10 @@ exit 0
 
 
 %changelog
+* Sat Apr 07 2012 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.8-7
+- Compile via -DJACK_32_64 RHBZ#803865
+- Adjust rtprio limit to 70. Adjust jack default priority to 60. RHBZ#795094
+
 * Sun Mar 25 2012 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.8-6
 - Rename limits file from 99-jack.conf to 95-jack.conf RHBZ#795094
 - Increase maximum number of ports and clients RHBZ#803871
