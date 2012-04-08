@@ -262,7 +262,7 @@ exit 0
 
 
 %changelog
-* Sut Apr 08 2012 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.8-8
+* Sun Apr 08 2012 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.8-8
 - Oops. Last build was against the wrong ffado on F-17. Rebuilding against override.
 
 * Sat Apr 07 2012 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.8-7
