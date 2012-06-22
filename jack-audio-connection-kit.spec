@@ -4,7 +4,7 @@
 Summary:       The Jack Audio Connection Kit
 Name:          jack-audio-connection-kit
 Version:       1.9.8
-Release:       8%{?dist}
+Release:       9%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
@@ -114,7 +114,7 @@ popd
 
 %build
 pushd jack-%{version}
-export CPPFLAGS="$RPM_OPT_FLAGS -DJACK_32_64"
+export CPPFLAGS="$RPM_OPT_FLAGS -DJACK_32_64 -O0"
 export PREFIX=%{_prefix}
 # Parallel build disabled as it fails sometimes
 ./waf configure \
@@ -262,6 +262,9 @@ exit 0
 
 
 %changelog
+* Thu Jun 21 2012 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.8-9
+- Build with -O0 until RHBZ#827748 is resolved
+
 * Sun Apr 08 2012 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.8-8
 - Oops. Last build was against the wrong ffado on F-17. Rebuilding against override.
 
