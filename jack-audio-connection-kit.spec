@@ -4,7 +4,7 @@
 Summary:       The Jack Audio Connection Kit
 Name:          jack-audio-connection-kit
 Version:       1.9.8
-Release:       10%{?dist}
+Release:       11%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
@@ -39,7 +39,6 @@ BuildRequires: doxygen
 BuildRequires: expat-devel
 %ifnarch s390 s390x %{arm}
 BuildRequires: libffado-devel
-BuildRequires: libfreebob-devel
 %endif
 BuildRequires: libsamplerate-devel
 BuildRequires: libsndfile-devel
@@ -126,7 +125,6 @@ export PREFIX=%{_prefix}
    --classic \
 %ifnarch s390 s390x %{arm}
    --firewire \
-   --freebob \
 %endif
    --alsa \
    --clients 256 \
@@ -262,6 +260,9 @@ exit 0
 
 
 %changelog
+* Tue Sep 04 2012 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.8-11
+- Removed libfreebob dependency as this package is retired
+
 * Thu Jul 19 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.9.8-10
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
 
