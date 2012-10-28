@@ -4,7 +4,7 @@
 Summary:       The Jack Audio Connection Kit
 Name:          jack-audio-connection-kit
 Version:       1.9.8
-Release:       11%{?dist}
+Release:       12%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
@@ -113,7 +113,7 @@ popd
 
 %build
 pushd jack-%{version}
-export CPPFLAGS="$RPM_OPT_FLAGS -DJACK_32_64 -O0"
+export CPPFLAGS="$RPM_OPT_FLAGS -DJACK_32_64"
 export PREFIX=%{_prefix}
 # Parallel build disabled as it fails sometimes
 ./waf configure \
@@ -260,6 +260,9 @@ exit 0
 
 
 %changelog
+* Sun Oct 28 2012 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.8-12
+- Seem like RHBZ#827748 is resolved. Rebuild optimized
+
 * Tue Sep 04 2012 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.8-11
 - Removed libfreebob dependency as this package is retired
 

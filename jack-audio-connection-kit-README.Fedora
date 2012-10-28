@@ -5,8 +5,8 @@ Switch to root account.
 Install the required packages:
     yum install alsa-plugins-jack
 
-Add yourself to the jackuser group.
-    usermod -a -G jackuser "<your username>"
+Add yourself to the audio and jackuser groups.
+    usermod -a -G audio,jackuser "<your username>"
 Now you will need to log out and log back in, or simply restart the system.
 
 Start the jack daemon (the best parameters for your sound card may be different):
