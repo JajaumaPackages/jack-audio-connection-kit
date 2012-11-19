@@ -4,7 +4,7 @@
 Summary:       The Jack Audio Connection Kit
 Name:          jack-audio-connection-kit
 Version:       1.9.8
-Release:       12%{?dist}
+Release:       13%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
@@ -113,7 +113,7 @@ popd
 
 %build
 pushd jack-%{version}
-export CPPFLAGS="$RPM_OPT_FLAGS -DJACK_32_64"
+export CPPFLAGS="$RPM_OPT_FLAGS -DJACK_32_64i -O0"
 export PREFIX=%{_prefix}
 # Parallel build disabled as it fails sometimes
 ./waf configure \
@@ -186,6 +186,7 @@ exit 0
 %files dbus
 %{_bindir}/jackdbus
 %{_datadir}/dbus-1/services/org.jackaudio.service
+%{_bindir}/jack_control
 
 %files devel
 %doc jack-%{version}/reference/*
@@ -201,7 +202,6 @@ exit 0
 %{_bindir}/jack_alias
 %{_bindir}/jack_bufsize
 %{_bindir}/jack_connect
-%{_bindir}/jack_control
 %{_bindir}/jack_disconnect
 %{_bindir}/jack_cpu_load
 %{_bindir}/jack_evmon
@@ -260,6 +260,11 @@ exit 0
 
 
 %changelog
+* Mon Nov 19 2012 Brendan Jones <brendan.jones.it@gmail.com> 1.9.8-13
+- Build with -O0. RHBZ#827748 still not resolved with gcc-4.7.2
+- Update README, add jack_control to dbus package
+- Add upstream sigsegv fault handling patch
+
 * Sun Oct 28 2012 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.8-12
 - Seem like RHBZ#827748 is resolved. Rebuild optimized
 
