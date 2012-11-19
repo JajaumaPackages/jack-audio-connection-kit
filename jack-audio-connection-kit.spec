@@ -31,6 +31,8 @@ Patch5:        jack-fix-connect-segfault.patch
 Patch6:        jack-ppc64-long.patch
 # uc_regs no longer available on ppc64
 Patch7:        jack-audio-connection-kit-ppc-uc_regs.patch 
+# correct sigsegv handling
+Patch8:        jack-audio-connection-kit-1.9.8-sigsegv-handling.patch
 
 BuildRequires: alsa-lib-devel
 BuildRequires: dbus-devel
@@ -100,6 +102,7 @@ pushd jack-%{version}
 %patch5 -p1 -b .connectcrash
 %patch6 -p1 -b .mpd
 %patch7 -p1 -b .uc_regs
+%patch8 -p1 -b .sigsegvfault
 
 # Fix encoding issues
 for file in ChangeLog README TODO; do
