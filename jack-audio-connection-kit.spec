@@ -4,7 +4,7 @@
 Summary:       The Jack Audio Connection Kit
 Name:          jack-audio-connection-kit
 Version:       1.9.8
-Release:       13%{?dist}
+Release:       14%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
@@ -116,7 +116,7 @@ popd
 
 %build
 pushd jack-%{version}
-export CPPFLAGS="$RPM_OPT_FLAGS -DJACK_32_64i -O0"
+export CPPFLAGS="$RPM_OPT_FLAGS -DJACK_32_64 -O0"
 export PREFIX=%{_prefix}
 # Parallel build disabled as it fails sometimes
 ./waf configure \
@@ -263,6 +263,9 @@ exit 0
 
 
 %changelog
+* Tue Nov 20 2012 Brendan Jones <brendan.jones.it@gmail.com> 1.9.8-14
+- Correct build flags
+
 * Mon Nov 19 2012 Brendan Jones <brendan.jones.it@gmail.com> 1.9.8-13
 - Build with -O0. RHBZ#827748 still not resolved with gcc-4.7.2
 - Update README, add jack_control to dbus package
