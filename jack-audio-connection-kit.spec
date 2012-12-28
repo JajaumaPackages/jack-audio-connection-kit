@@ -3,13 +3,13 @@
 
 Summary:       The Jack Audio Connection Kit
 Name:          jack-audio-connection-kit
-Version:       1.9.8
-Release:       14%{?dist}
+Version:       1.9.9.5
+Release:       1%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
 URL:           http://www.jackaudio.org
-Source0:       http://www.grame.fr/~letz/jack-%{version}.tgz
+Source0:       https://dl.dropbox.com/u/28869550/jack-%{version}.tar.bz2
 Source1:       %{name}-README.Fedora
 Source2:       %{name}-script.pa
 Source3:       %{name}-limits.conf
@@ -19,20 +19,14 @@ Patch0:        jack-audio-connection-kit-no_date_footer.patch
 Patch1:        jack-doxygen-output-dir-fix.patch
 # We don't want the internal API documentation
 Patch2:        jack-apidoc-only.patch
-# Enable ffado buffersize change at runtime. From upstream trunk
-# https://github.com/jackaudio/jack2/commit/96e025123
-Patch3:        jack-ffado-buffersize.patch
+# Fix doxygen doc build regression. From upstream trunk 95a1162d6aecc91
+Patch3:        jack-doxygen-buildfix.patch
 # Adjust default priority. RHBZ#795094
 Patch4:        jack-realtime-compat.patch
-# Fix jack-connect segfault when invoked with no arguments. From upstream trunk
-# https://github.com/jackaudio/jack2/commit/00280570a
-Patch5:        jack-fix-connect-segfault.patch
+# Enable renaming and reordering the jack ports RHBZ#887408
+Patch5:        jack-portnames.patch
 # Fix ppc64 mpd startup issue RHBZ#799552
 Patch6:        jack-ppc64-long.patch
-# uc_regs no longer available on ppc64
-Patch7:        jack-audio-connection-kit-ppc-uc_regs.patch 
-# correct sigsegv handling
-Patch8:        jack-audio-connection-kit-1.9.8-sigsegv-handling.patch
 
 BuildRequires: alsa-lib-devel
 BuildRequires: dbus-devel
@@ -45,6 +39,8 @@ BuildRequires: libffado-devel
 BuildRequires: libsamplerate-devel
 BuildRequires: libsndfile-devel
 BuildRequires: ncurses-devel
+# We are waiting for RHBZ#887530 to enable opus support
+#BuildRequires: opus-devel
 BuildRequires: pkgconfig
 BuildRequires: python2
 BuildRequires: readline-devel
@@ -77,7 +73,6 @@ Launcher to start Jack through D-Bus.
 Summary:       Header files for Jack
 Group:         Development/Libraries
 Requires:      %{name} = %{version}-%{release}
-Requires:      pkgconfig
 
 %description devel
 Header files for the Jack Audio Connection Kit.
@@ -93,16 +88,13 @@ Small example clients that use the Jack Audio Connection Kit.
 %prep
 %setup -q -n jack-%{version}
 
-pushd jack-%{version}
 %patch0 -p1 -b .nodate
 %patch1 -p1 -b .outdir
 %patch2 -p1 -b .nointernalapi
-%patch3 -p1 -b .ffadobuffer
+%patch3 -p1 -b .doxyfix
 %patch4 -p1 -b .priority
-%patch5 -p1 -b .connectcrash
+%patch5 -p1 -b .portnames
 %patch6 -p1 -b .mpd
-%patch7 -p1 -b .uc_regs
-%patch8 -p1 -b .sigsegvfault
 
 # Fix encoding issues
 for file in ChangeLog README TODO; do
@@ -111,18 +103,15 @@ for file in ChangeLog README TODO; do
    touch -r $file $file.tmp2
    mv -f $file.tmp2 $file
 done
-popd
-
 
 %build
-pushd jack-%{version}
-export CPPFLAGS="$RPM_OPT_FLAGS -DJACK_32_64 -O0"
+export CPPFLAGS="$RPM_OPT_FLAGS -O0"
 export PREFIX=%{_prefix}
 # Parallel build disabled as it fails sometimes
 ./waf configure \
-   -j1 \
-   --mandir=/share/man/man1 \
-   --libdir=/%{_lib} \
+   %{?_smp_mflags} \
+   --mandir=%{_mandir}/man1 \
+   --libdir=%{_libdir} \
    --doxygen \
    --dbus \
    --classic \
@@ -135,10 +124,8 @@ export PREFIX=%{_prefix}
 
 
 ./waf build %{?_smp_mflags} -v
-popd
 
 %install
-pushd jack-%{version}
 ./waf --destdir=$RPM_BUILD_ROOT install
 
 # move doxygen documentation to the right place
@@ -161,7 +148,6 @@ mv $RPM_BUILD_ROOT%{_bindir}/jack_rec $RPM_BUILD_ROOT%{_bindir}/jackrec
 
 # Fix permissions of the modules
 chmod 755 $RPM_BUILD_ROOT%{_libdir}/jack/*.so $RPM_BUILD_ROOT%{_libdir}/libjack*.so.*.*.*
-popd
 
 %pre
 getent group %groupname > /dev/null || groupadd -r %groupname
@@ -172,9 +158,9 @@ exit 0
 %postun -p /sbin/ldconfig
 
 %files 
-%doc jack-%{version}/ChangeLog jack-%{version}/README jack-%{version}/README_NETJACK2 jack-%{version}/TODO
-%doc jack-%{version}/README.Fedora
-%doc jack-%{version}/jack.pa
+%doc ChangeLog README README_NETJACK2 TODO
+%doc README.Fedora
+%doc jack.pa
 %{_bindir}/jackd
 %{_bindir}/jackrec
 %{_libdir}/jack/
@@ -192,7 +178,7 @@ exit 0
 %{_bindir}/jack_control
 
 %files devel
-%doc jack-%{version}/reference/*
+%doc reference/html/
 %{_includedir}/jack/
 %{_libdir}/libjack.so
 %{_libdir}/libjacknet.so
@@ -263,6 +249,9 @@ exit 0
 
 
 %changelog
+* Tue Dec 25 2012 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.9.5-1
+- update to 1.9.9.5
+
 * Tue Nov 20 2012 Brendan Jones <brendan.jones.it@gmail.com> 1.9.8-14
 - Correct build flags
 
