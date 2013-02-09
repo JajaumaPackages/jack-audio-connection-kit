@@ -4,7 +4,7 @@
 Summary:       The Jack Audio Connection Kit
 Name:          jack-audio-connection-kit
 Version:       1.9.9.5
-Release:       1%{?dist}
+Release:       2%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
@@ -39,8 +39,9 @@ BuildRequires: libffado-devel
 BuildRequires: libsamplerate-devel
 BuildRequires: libsndfile-devel
 BuildRequires: ncurses-devel
-# We are waiting for RHBZ#887530 to enable opus support
-#BuildRequires: opus-devel
+%if 0%{fedora} > 18
+BuildRequires: opus-devel
+%endif
 BuildRequires: pkgconfig
 BuildRequires: python2
 BuildRequires: readline-devel
@@ -249,6 +250,9 @@ exit 0
 
 
 %changelog
+* Fri Feb 08 2013 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.9.5-2
+- rebuilt with opus support on Fedora > 18
+
 * Tue Dec 25 2012 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.9.5-1
 - update to 1.9.9.5
 
