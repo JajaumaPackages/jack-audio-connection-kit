@@ -1,10 +1,17 @@
+# set bootstrap to 1 in order to break the initial libffado loop
+#
+# libffado -> PyQt4 -> phonon -> phonon-backend-gstreamer ->
+# -> gstreamer-plugins-good -> jack-audio-connection-kit -> libffado
+#
+%global bootstrap 0
+
 %global groupname jackuser
 %global pagroup   pulse-rt
 
 Summary:       The Jack Audio Connection Kit
 Name:          jack-audio-connection-kit
 Version:       1.9.9.5
-Release:       4%{?dist}
+Release:       5%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
@@ -33,7 +40,9 @@ BuildRequires: dbus-devel
 BuildRequires: doxygen
 BuildRequires: expat-devel
 %ifnarch s390 s390x
+%if !0%{?bootstrap}
 BuildRequires: libffado-devel
+%endif
 %endif
 BuildRequires: libsamplerate-devel
 BuildRequires: libsndfile-devel
@@ -114,7 +123,9 @@ export PREFIX=%{_prefix}
    --dbus \
    --classic \
 %ifnarch s390 s390x
+%if !0%{?bootstrap}
    --firewire \
+%endif
 %endif
    --alsa \
    --clients 256 \
@@ -247,6 +258,9 @@ exit 0
 
 
 %changelog
+* Wed Mar 26 2014 Jaromir Capik <jcapik@redhat.com> - 1.9.9.5-5
+- Adding bootstrap support to break libffado dependency loops
+
 * Mon Feb 24 2014 Peter Robinson <pbrobinson@fedoraproject.org> 1.9.9.5-4
 - Drop celt support, should use opus by default as it's long replaced it and it has better quality
 - Re-enable firewire (libffado) support on ARMv7
