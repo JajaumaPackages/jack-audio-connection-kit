@@ -11,7 +11,7 @@
 Summary:       The Jack Audio Connection Kit
 Name:          jack-audio-connection-kit
 Version:       1.9.9.5
-Release:       5%{?dist}
+Release:       6%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
@@ -34,6 +34,8 @@ Patch4:        jack-realtime-compat.patch
 Patch5:        jack-portnames.patch
 # Fix ppc64 mpd startup issue RHBZ#799552
 Patch6:        jack-ppc64-long.patch
+# Fix aarch64 arm - see https://github.com/jackaudio/jack2/commit/d11bb09
+Patch7:        jack-audio-connection-kit-alpha_ia64-sigsegv.patch
 
 BuildRequires: alsa-lib-devel
 BuildRequires: dbus-devel
@@ -102,6 +104,7 @@ Small example clients that use the Jack Audio Connection Kit.
 %patch4 -p1 -b .priority
 %patch5 -p1 -b .portnames
 %patch6 -p1 -b .mpd
+%patch7 -p1 -b .armsigsegv
 
 # Fix encoding issues
 for file in ChangeLog README TODO; do
@@ -258,6 +261,9 @@ exit 0
 
 
 %changelog
+* Sun May 04 2014 Brendan Jones <brendan.jones.it@gmail.com> 1.9.9.5-6
+- Fix build on aarch64 - commit #d11bb09
+
 * Wed Mar 26 2014 Jaromir Capik <jcapik@redhat.com> - 1.9.9.5-5
 - Adding bootstrap support to break libffado dependency loops
 
