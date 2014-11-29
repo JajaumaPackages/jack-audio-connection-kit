@@ -10,8 +10,8 @@
 
 Summary:       The Jack Audio Connection Kit
 Name:          jack-audio-connection-kit
-Version:       1.9.9.5
-Release:       8%{?dist}
+Version:       1.9.10
+Release:       1%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
@@ -26,16 +26,12 @@ Patch0:        jack-audio-connection-kit-no_date_footer.patch
 Patch1:        jack-doxygen-output-dir-fix.patch
 # We don't want the internal API documentation
 Patch2:        jack-apidoc-only.patch
-# Fix doxygen doc build regression. From upstream trunk 95a1162d6aecc91
-Patch3:        jack-doxygen-buildfix.patch
 # Adjust default priority. RHBZ#795094
-Patch4:        jack-realtime-compat.patch
+Patch3:        jack-realtime-compat.patch
 # Enable renaming and reordering the jack ports RHBZ#887408
-Patch5:        jack-portnames.patch
+Patch4:        jack-portnames.patch
 # Fix ppc64 mpd startup issue RHBZ#799552
-Patch6:        jack-ppc64-long.patch
-# Fix aarch64 arm - see https://github.com/jackaudio/jack2/commit/d11bb09
-Patch7:        jack-audio-connection-kit-alpha_ia64-sigsegv.patch
+Patch5:        jack-ppc64-long.patch
 
 BuildRequires: alsa-lib-devel
 BuildRequires: dbus-devel
@@ -100,11 +96,9 @@ Small example clients that use the Jack Audio Connection Kit.
 %patch0 -p1 -b .nodate
 %patch1 -p1 -b .outdir
 %patch2 -p1 -b .nointernalapi
-%patch3 -p1 -b .doxyfix
-%patch4 -p1 -b .priority
-%patch5 -p1 -b .portnames
-%patch6 -p1 -b .mpd
-%patch7 -p1 -b .armsigsegv
+%patch3 -p1 -b .priority
+%patch4 -p1 -b .portnames
+%patch5 -p1 -b .mpd
 
 # Fix encoding issues
 for file in ChangeLog README TODO; do
@@ -261,6 +255,9 @@ exit 0
 
 
 %changelog
+* Fri Nov 28 2014 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.10-1
+- update to 1.9.10
+
 * Sat Aug 16 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.9.9.5-8
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
 
