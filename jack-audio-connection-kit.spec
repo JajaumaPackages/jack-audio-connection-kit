@@ -11,7 +11,7 @@
 Summary:       The Jack Audio Connection Kit
 Name:          jack-audio-connection-kit
 Version:       1.9.10
-Release:       1%{?dist}
+Release:       2%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
@@ -32,6 +32,8 @@ Patch3:        jack-realtime-compat.patch
 Patch4:        jack-portnames.patch
 # Fix ppc64 mpd startup issue RHBZ#799552
 Patch5:        jack-ppc64-long.patch
+# Fix building with gcc5
+Patch6:        jack-gcc5.patch
 
 BuildRequires: alsa-lib-devel
 BuildRequires: dbus-devel
@@ -99,6 +101,7 @@ Small example clients that use the Jack Audio Connection Kit.
 %patch3 -p1 -b .priority
 %patch4 -p1 -b .portnames
 %patch5 -p1 -b .mpd
+%patch6 -p1 -b .gcc5
 
 # Fix encoding issues
 for file in ChangeLog README TODO; do
@@ -255,6 +258,9 @@ exit 0
 
 
 %changelog
+* Tue May 12 2015 Nils Philippsen <nils@redhat.com> - 1.9.10-2
+- fix building with gcc5
+
 * Fri Nov 28 2014 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.10-1
 - update to 1.9.10
 
