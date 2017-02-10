@@ -11,7 +11,7 @@
 Summary:       The Jack Audio Connection Kit
 Name:          jack-audio-connection-kit
 Version:       1.9.10
-Release:       6%{?dist}
+Release:       7%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
@@ -262,6 +262,9 @@ exit 0
 
 
 %changelog
+* Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.9.10-7
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
+
 * Thu Jan 12 2017 Igor Gnatenko <ignatenko@redhat.com> - 1.9.10-6
 - Rebuild for readline 7.x
 
