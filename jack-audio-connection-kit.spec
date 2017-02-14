@@ -11,7 +11,7 @@
 Summary:       The Jack Audio Connection Kit
 Name:          jack-audio-connection-kit
 Version:       1.9.10
-Release:       7%{?dist}
+Release:       8%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
@@ -36,6 +36,8 @@ Patch5:        jack-ppc64-long.patch
 Patch6:        jack-gcc5.patch
 # Fix building with gcc6
 Patch7:        jack-gcc6.patch
+# Fix building with gcc7
+Patch8:        jack-gcc7.patch
 
 
 BuildRequires: alsa-lib-devel
@@ -106,6 +108,7 @@ Small example clients that use the Jack Audio Connection Kit.
 %patch5 -p1 -b .mpd
 %patch6 -p1 -b .gcc5
 %patch7 -p1 -b .gcc6
+%patch8 -p1 -b .gcc7
 
 # Fix encoding issues
 for file in ChangeLog README TODO; do
@@ -262,6 +265,9 @@ exit 0
 
 
 %changelog
+* Mon Feb 13 2017 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> - 1.9.10-8
+- fix building with gcc7
+
 * Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.9.10-7
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
